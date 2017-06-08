@@ -1,12 +1,19 @@
 package pongClient.model;
 
+import java.io.Serializable;
+
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class PongBall {
+public class PongBall implements Serializable{
 
-	private Circle ball;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2224822418047337630L;
+	
+	private transient Circle ball; //transient potrzebne do serializacji
 	private int velocityX;
 	private int velocityY;
 	
