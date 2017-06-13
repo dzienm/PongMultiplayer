@@ -1,6 +1,8 @@
 package pongServer;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -37,6 +39,9 @@ public class ServerController {
 	ServerScreen serverView;
 
 	private Socket clientSocket;
+
+	private ObjectOutputStream dataWriter;
+	private ObjectInputStream dataReader;
 	
 	public ServerController() {
 		serverStage = new Stage();
@@ -67,6 +72,11 @@ public class ServerController {
 		serverView = new ServerScreen(this);
 		serverView.initialize();
 		serverPort = -1;
+		try {
+			serverPong.close();
+		} catch (IOException e) {
+			
+		}
 	}
 	
 	public void draw(long timeCurrent){
@@ -151,14 +161,43 @@ public class ServerController {
 		
 		try {
 			serverPong = new ServerSocket(serverPort);
-			clientSocket = serverPong.accept();
 			serverState = ServerStateEnum.Initialized;
+			clientCommChannels();
 		} catch (IOException e) {
 			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't start the server.");
 			e.printStackTrace();
 			reset();
 		}
 		
+		
+	}
+
+	private void clientCommChannels() {
+		
+		try {
+			clientSocket = serverPong.accept();
+			dataWriter = new ObjectOutputStream(clientSocket.getOutputStream());
+			dataReader = new ObjectInputStream(clientSocket.getInputStream());
+			serverState = ServerStateEnum.ConnectionEstablished;
+			dataFlow();
+		} catch (IOException e) {
+			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't connect with the client.");
+			e.printStackTrace();
+			reset();
+		}
+		
+		
+	}
+
+	private void dataFlow() {
+		while(true){
+			try {
+				dataWriter.writeObject(serverState);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 	}
 

@@ -4,8 +4,8 @@ public enum ServerStateEnum {
 		
 		NotConnected,
 		Initialized, 
-		Waiting, 
-		Started;
+		ConnectionEstablished, 
+		StreamStarted;
 }
 	
 
