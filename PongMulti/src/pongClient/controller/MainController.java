@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pongClient.model.PongGameState;
+import pongServer.ServerController;
 import utilityWindows.AlertBox;
 
 public class MainController {
@@ -21,6 +22,7 @@ public class MainController {
 	private UserInputQueue userInputQueue;
 	
 	private TitleScreenController titleScreenControl; //kazdy kontroler z animacja trzeba deklarowac albo miec oddzielne klasy gameAnimationTimer
+	private ServerController serverController;
 	
 	private Image gameIcon;
 	
@@ -42,6 +44,10 @@ public class MainController {
 		primaryStage.show();
 		
 		this.titleScreenControl = new TitleScreenController(this);
+		serverController = new ServerController();
+		
+		//do wykomentowania to co ponizej
+		serverController.initialize();
 		
 		this.animationTimer = new GameAnimationTimer();
 		animationTimer.start();
@@ -62,6 +68,7 @@ public class MainController {
 						.orElse(ButtonType.CANCEL) == ButtonType.OK) {
 					animationTimer.stop();
 					//unloadContent();
+					titleScreenControl.close();
 					primaryStage.close();
 				}
 			}
@@ -155,6 +162,11 @@ public class MainController {
 	public UserInputQueue getUserInputQueue() {
 		return userInputQueue;
 	}
+
+	public ServerController getServerController() {
+		return serverController;
+	}
+
 	
 
 }

@@ -103,6 +103,8 @@ public class TitleScreenView {
         startServerText.setTranslateX(370);       
         startServerText.setTranslateY(375);
         startServerText.setVisible(false);
+        startServerText.setOnMousePressed(e -> {
+			titleController.openServer();});
         
         findServerText = new Text();              
         findServerText.setText("Find servers");       

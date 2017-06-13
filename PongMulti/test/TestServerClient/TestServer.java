@@ -1,7 +1,9 @@
 package TestServerClient;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -14,6 +16,7 @@ public class TestServer {
 	private static Socket socket = null;
 	private static ObjectInputStream inStream = null;
 	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -24,10 +27,28 @@ public class TestServer {
 			socket = serverSocket.accept();
 			System.out.println("Connected");
 			inStream = new ObjectInputStream(socket.getInputStream());
-
+			ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream()); 
+			
 			PongBall pilka = (PongBall) inStream.readObject();
 			System.out.println("Otrzymalem pilke. Jej predkosc w kierunku X = " + pilka.getVelocityX());
-			socket.close();
+			
+			PongBall pilka2 = (PongBall) inStream.readObject();
+			System.out.println("Otrzymalem pilke2. Jej predkosc w kierunku X = " + pilka2.getVelocityX());
+			
+			DataInputStream dataIn = new DataInputStream(socket.getInputStream());
+			boolean testB = dataIn.readBoolean();
+			if(testB){
+				System.out.println("test");
+			}
+			
+			//socket = serverSocket.accept();
+			
+			//ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream()); 
+			//pilka.setVelocity(2, 2);
+			//outStream.flush();
+			//System.out.println("Wyslalem pilke. Jej predkosc w kierunku X = " + pilka.getVelocityX());
+			
+			//socket.close();
 
 			} catch (SocketException se) {
 				se.printStackTrace();

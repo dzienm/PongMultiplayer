@@ -6,6 +6,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import pongClient.view.TitleScreenView;
+import pongServer.ServerController;
 
 //warto przyjrzec sie patternowi Dependency Injection/ Inversion of Control
 
@@ -16,11 +17,13 @@ public class TitleScreenController {
 	Media soundPop;
 	Media soundcsgo;
 	MediaPlayer mediaPlayer;
+	MediaPlayer musicPlayer;
 	TitleScreenView currentView;
 	
 	public TitleScreenController(MainController controller) {
 		mainController = controller;
 		initialize();
+		
 	}
 
 	public void initialize(){
@@ -28,6 +31,7 @@ public class TitleScreenController {
 		currentView.initialize();
 		soundPop = new Media(new File("resources/sounds/Blop.mp3").toURI().toString());
 		soundcsgo = new Media(new File("resources/sounds/csgoTitleScreen.mp3").toURI().toString());
+		
 	}
 	
 	public void draw() {
@@ -80,8 +84,8 @@ public class TitleScreenController {
 		}
 		
 		if(timeElapsed == 140){
-			mediaPlayer = new MediaPlayer(soundcsgo);
-			mediaPlayer.play();
+			musicPlayer = new MediaPlayer(soundcsgo);
+			musicPlayer.play();
 		}
 		
 		if(timeElapsed > 150){
@@ -106,5 +110,13 @@ public class TitleScreenController {
 	public void playPressed() {
 		System.out.println("wcisnieto");
 	}
+	
+	public void openServer(){
+		mainController.getServerController().initialize();
+	}
 
+	public void close(){
+		musicPlayer.stop();
+	}
+	
 }
