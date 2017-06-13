@@ -33,7 +33,12 @@ public class ServerScreen {
 	private Button stopServerButton;
 	private Text serverStateText;
 	private Text serverStartedText;
+	private Text waitingConnectionText;
 	
+	public Text getWaitingConnectionText() {
+		return waitingConnectionText;
+	}
+
 	public Text getServerStartedText() {
 		return serverStartedText;
 	}
@@ -95,6 +100,18 @@ public class ServerScreen {
         serverStartedText.setTranslateY(420);
         serverStartedText.setVisible(false);
         
+        waitingConnectionText = new Text();
+        waitingConnectionText.setText("Waiting for the client to connect."); 
+        waitingConnectionText.setX(0.0f);        
+        waitingConnectionText.setY(0.0f);        
+        waitingConnectionText.setFill(Color.RED);       
+        waitingConnectionText.setFont(Font.font("null", FontWeight.BOLD, 24));
+        waitingConnectionText.setEffect(mb);
+        waitingConnectionText.setTranslateX(220);       
+        waitingConnectionText.setTranslateY(460);
+        waitingConnectionText.setVisible(false);
+        
+        
         startServerButton = new Button();
         startServerButton.setTranslateX(500);
         startServerButton.setTranslateY(316);
@@ -116,7 +133,7 @@ public class ServerScreen {
         stopServerButton.setId("stopServerButton");
         stopServerButton.setVisible(false);
         
-		canvas = new Canvas(1215,815);	
+		canvas = new Canvas(1115,615);	
 		
 		root = new Pane();
 
@@ -129,11 +146,12 @@ public class ServerScreen {
 		root.getChildren().add(serverPortText);
 		root.getChildren().add(serverStateText);
 		root.getChildren().add(serverStartedText);
+		root.getChildren().add(waitingConnectionText);
 		root.getChildren().add(startServerButton);
 		root.getChildren().add(stopServerButton);
 		
 				
-		scene = new Scene(root,1200,800);
+		scene = new Scene(root,1100,600);
 		scene.setOnKeyPressed(keyEvent -> {
 			if(keyEvent.getCode() == KeyCode.ESCAPE){
 				stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));

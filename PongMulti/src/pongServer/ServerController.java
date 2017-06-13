@@ -2,6 +2,7 @@ package pongServer;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
@@ -11,7 +12,6 @@ import javafx.scene.control.Alert.AlertType;
 
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import pongServer.model.PongServerPoll;
 import pongServer.view.ServerScreen;
 import utilityWindows.AlertBox;
 
@@ -35,6 +35,8 @@ public class ServerController {
 	private long startNanoTime;
 	
 	ServerScreen serverView;
+
+	private Socket clientSocket;
 	
 	public ServerController() {
 		serverStage = new Stage();
@@ -53,7 +55,6 @@ public class ServerController {
 		totalSecondsLapsed = 0;
 		
 		startNanoTime = System.nanoTime();
-		serverPong = new PongServerPoll();
 		
 		serverView = new ServerScreen(this);
 		serverView.initialize();
@@ -62,11 +63,10 @@ public class ServerController {
 	}
 	
 	private void reset(){
+		serverState = ServerStateEnum.NotConnected;
 		serverView = new ServerScreen(this);
 		serverView.initialize();
 		serverPort = -1;
-		serverPong = new PongServerPoll();
-		setServerStarted(false);
 	}
 	
 	public void draw(long timeCurrent){
@@ -82,7 +82,15 @@ public class ServerController {
 			
 			serverView.getServerStartedText().setText("Server started at " + serverPort + ".");
 			serverView.getServerStartedText().setVisible(true);
-			serverView.getServerStateText().setVisible(false);       
+			serverView.getServerStateText().setVisible(false);
+			serverView.getWaitingConnectionText().setVisible(true);
+			
+			if(totalSecondsLapsed%2 == 0){
+				serverView.getWaitingConnectionText().setVisible(false);}
+			else{
+				serverView.getWaitingConnectionText().setVisible(true);
+			}
+			
 		}
 	}
 	
@@ -143,9 +151,10 @@ public class ServerController {
 		
 		try {
 			serverPong = new ServerSocket(serverPort);
-			setServerStarted(true);
+			clientSocket = serverPong.accept();
+			serverState = ServerStateEnum.Initialized;
 		} catch (IOException e) {
-			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't start server.");
+			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't start the server.");
 			e.printStackTrace();
 			reset();
 		}
@@ -154,13 +163,16 @@ public class ServerController {
 	}
 
 	public void stopServerButtonPressed() {
-		serverPong.stopServer(this);
+		
+		try {
+			serverPong.close();
+		} catch (IOException e) {
+			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Error when stopping the server. ");
+			e.printStackTrace();
+		}
 		reset();
 	}
 
-	public void serverError() {
-		AlertBox.showAndWait(AlertType.ERROR, "Pong", "Server error.");
-	}
 	
 	
 	private class GameAnimationTimer extends AnimationTimer {
@@ -181,14 +193,6 @@ public class ServerController {
 	}
 
 
-	public void setServerStarted(boolean started) {
-		if(started){
-			serverState = ServerStateEnum.Initialized;
-		}
-		else{
-			serverState = ServerStateEnum.NotConnected;
-		}
-	}
-
+	
 
 }
