@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.HashMap;
 
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
@@ -25,6 +26,8 @@ public class ServerController {
 
 	private Stage serverStage;
 	private MainController mainController;
+	
+	private HashMap<Long,Thread> connectionThreads;
 	
 	private UserInputQueue userInputQueue;
 	private GameAnimationTimer animationTimer;
@@ -221,7 +224,8 @@ public class ServerController {
 					}
 					catch(IOException ex){
 						System.out.println("Connection lost.");
-						
+						serverState = ServerStateEnum.NotConnected;
+						//reset();
 						break;
 					}
 
@@ -250,13 +254,14 @@ public class ServerController {
 				//System.out.println("Odebralem pileczke predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
 
 				//dataFlow();
-				reset();
+				
 
 			}
 
 		};
 
 		clientThread = new Thread(clientListener);
+		connectionThreads.put(clientThread.getId(), clientThread);
 		clientThread.start();
 
 

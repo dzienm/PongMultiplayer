@@ -31,7 +31,7 @@ public class SimpleClientServerControllerTest {
 		//pileczka = (PongBall) pileczkaReader.readObject();
 		//System.out.println("Odebralem pilke. Jej predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
 		
-		Thread.sleep(2000);
+		Thread.sleep(1000);
 		socket.close();
 		//}
 	}
