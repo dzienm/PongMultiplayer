@@ -16,7 +16,7 @@ import utilityWindows.AlertBox;
 
 public class ServerConnectionController {
 
-	private MainController mainController;
+	private TitleScreenController mainController;
 	private ServerConnectionView connectionView;
 	//private GameAnimationTimer animationTimer;
 	private Stage stage;
@@ -30,7 +30,7 @@ public class ServerConnectionController {
 	}
 
 	
-	public ServerConnectionController(MainController controller) {
+	public ServerConnectionController(TitleScreenController controller) {
 		mainController = controller;
 		
 	}
@@ -39,7 +39,7 @@ public class ServerConnectionController {
 		
 		soundcsgo = new Media(new File("resources/sounds/csgoTitleScreen.mp3").toURI().toString());
 		
-		stage = mainController.getPrimaryStage();
+		stage = mainController.getStage();
 		stage.setTitle("PongClientApp");
 		stage.setOnCloseRequest(e -> stage_CloseRequest(e));
 		stage.show();

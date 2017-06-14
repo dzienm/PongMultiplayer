@@ -17,7 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import pongClient.controller.MainController;
+import pongClient.controller.TitleScreenController;
 import pongClient.model.PongBall;
 import pongServer.view.ServerScreen;
 import utilityWindows.AlertBox;
@@ -25,7 +25,7 @@ import utilityWindows.AlertBox;
 public class ServerController {
 
 	private Stage serverStage;
-	private MainController mainController;
+	private TitleScreenController mainController; //byc moze niepotrzebny jesli otwierany jako oddzielne okno
 	
 	private HashMap<Long,Thread> connectionThreads;
 	
@@ -53,7 +53,7 @@ public class ServerController {
 	
 	private Thread clientThread;
 	
-	public ServerController(MainController _controller) {
+	public ServerController(TitleScreenController _controller) {
 		serverStage = new Stage();
 		animationTimer = new GameAnimationTimer();
 		mainController = _controller;
