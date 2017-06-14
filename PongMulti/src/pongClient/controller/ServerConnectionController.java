@@ -3,6 +3,7 @@ package pongClient.controller;
 
 import java.io.File;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
@@ -18,8 +19,10 @@ public class ServerConnectionController {
 
 	private TitleScreenController mainController;
 	private ServerConnectionView connectionView;
-	//private GameAnimationTimer animationTimer;
+	private GameAnimationTimer animationTimer;
 	private Stage stage;
+	private long timeElapsed;
+	private long secondsElapsed;
 	
 	private Media soundcsgo;
 	private MediaPlayer musicPlayer;
@@ -32,12 +35,12 @@ public class ServerConnectionController {
 	
 	public ServerConnectionController(TitleScreenController controller) {
 		mainController = controller;
-		
+		animationTimer = new GameAnimationTimer();
 	}
 
 	public void initialize(){
 		
-		soundcsgo = new Media(new File("resources/sounds/csgoTitleScreen.mp3").toURI().toString());
+		soundcsgo = new Media(new File("resources/sounds/csgoFindServer.mp3").toURI().toString());
 		
 		stage = mainController.getStage();
 		stage.setTitle("PongClientApp");
@@ -46,15 +49,19 @@ public class ServerConnectionController {
 		
 		connectionView = new ServerConnectionView(this);
 		connectionView.initialize();
-		//animationTimer.start();
+		animationTimer.start();
 	
 	}
 
-	public void draw(long currentTime){
+	public void draw(){
 		
-		musicPlayer = new MediaPlayer(soundcsgo);
-		musicPlayer.play();
+		if(timeElapsed == 1){
+			musicPlayer = new MediaPlayer(soundcsgo);
+			musicPlayer.play();
+		}
 		
+		timeElapsed++;
+		secondsElapsed = timeElapsed/60;
 	}
 
 	public static boolean validIP(String ip) {
@@ -101,15 +108,15 @@ public class ServerConnectionController {
 		}
 	}
 	
-	/*private class GameAnimationTimer extends AnimationTimer {
+	private class GameAnimationTimer extends AnimationTimer {
 
 
 		@Override
 		public void handle(long currentNanoTime) {
-			draw(currentNanoTime);
+			draw();
 		}
 		
-	}*/
+	}
 	
 	public void stage_CloseRequest(WindowEvent windowEvent) {
 		windowEvent.consume();
@@ -123,6 +130,20 @@ public class ServerConnectionController {
 				}
 			}
 		});
+	}
+
+
+	public void backButtonPressed() {
+		musicPlayer.stop();
+		animationTimer.stop();
+		mainController.initialize();
+		
+	}
+
+
+	public void connectButtonPressed() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

@@ -37,7 +37,6 @@ public class TitleScreenController {
 	}
 
 
-
 	Media soundPop;
 	Media soundcsgo;
 	MediaPlayer mediaPlayer;
@@ -53,6 +52,8 @@ public class TitleScreenController {
 	public void initialize(){
 		loadContent();
 		
+		musicPlayer = new MediaPlayer(soundcsgo);
+		
 		stage.setTitle("Pong Multiplayer");
 		stage.setOnCloseRequest(e -> stage_CloseRequest(e));
 		stage.getIcons().add(gameIcon);
@@ -63,6 +64,10 @@ public class TitleScreenController {
 		
 		timeElapsed = 0;
 		animationTimer.start();
+		
+		//do wyrzucenia
+		//openServer();
+		openClient();
 	}
 	
 	private void loadContent(){
@@ -122,7 +127,6 @@ public class TitleScreenController {
 		}
 		
 		if(timeElapsed == 140){
-			musicPlayer = new MediaPlayer(soundcsgo);
 			musicPlayer.play();
 		}
 		
