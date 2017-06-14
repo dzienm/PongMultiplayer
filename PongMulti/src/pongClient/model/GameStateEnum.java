@@ -2,7 +2,7 @@ package pongClient.model;
 
 public enum GameStateEnum {
 		TitleScreen, 
-		Waiting,
+		ClientConnectionSetup,
 		Playing, 
 		GameOver;
 }

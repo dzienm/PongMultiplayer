@@ -4,6 +4,7 @@ import java.io.File;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import pongClient.model.GameStateEnum;
 import pongClient.view.TitleScreenView;
 
 //warto przyjrzec sie patternowi Dependency Injection/ Inversion of Control
@@ -112,8 +113,15 @@ public class TitleScreenController {
 		mainController.getServerController().initialize();
 	}
 
+	public void openClient(){
+		close();
+		mainController.setGameState(GameStateEnum.ClientConnectionSetup);
+		mainController.getClientConnectionController().initialize();
+	}
+	
 	public void close(){
 		musicPlayer.stop();
+		
 	}
 	
 }

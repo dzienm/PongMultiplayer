@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import pongClient.model.PongGameState;
+import pongClient.model.GameStateEnum;
 import pongServer.ServerController;
 import utilityWindows.AlertBox;
 
@@ -17,13 +17,27 @@ public class MainController {
 
 	private Stage primaryStage;
 	private GameAnimationTimer animationTimer;
-	private PongGameState gameState;
+	private GameStateEnum gameState;
 	
+	public GameStateEnum getGameState() {
+		return gameState;
+	}
+
+	public void setGameState(GameStateEnum gameState) {
+		this.gameState = gameState;
+	}
+
 	private UserInputQueue userInputQueue;
 	
 	private TitleScreenController titleScreenControl; //kazdy kontroler z animacja trzeba deklarowac albo miec oddzielne klasy gameAnimationTimer
 	private ServerController serverController;
+	private ServerConnectionController clientConnectionController;
 	
+	
+	public ServerConnectionController getClientConnectionController() {
+		return clientConnectionController;
+	}
+
 	public void setServerController(ServerController serverController) {
 		this.serverController = serverController;
 	}
@@ -38,7 +52,7 @@ public class MainController {
 
 	public void initialize(){
 		
-		gameState = new PongGameState();
+		gameState = GameStateEnum.TitleScreen;
 		userInputQueue = new UserInputQueue();
 		loadContent();
 		
@@ -47,8 +61,9 @@ public class MainController {
 		primaryStage.setOnCloseRequest(e -> stage_CloseRequest(e));
 		primaryStage.show();
 		
-		this.titleScreenControl = new TitleScreenController(this);
+		titleScreenControl = new TitleScreenController(this);
 		serverController = new ServerController(this);
+		clientConnectionController = new ServerConnectionController(this);
 		
 		//do wykomentowania to co ponizej
 		serverController.initialize();
@@ -79,9 +94,7 @@ public class MainController {
 		});
 	}
 	
-	public PongGameState getCurrentGameState(){
-		return gameState;
-	}
+
 	
 	
 	private class GameAnimationTimer extends AnimationTimer {
@@ -129,17 +142,13 @@ public class MainController {
 			if (keyCode == KeyCode.ESCAPE) {
 				primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
 			}
-			switch (gameState.getGameState()) {
+			switch (gameState) {
 			case TitleScreen:
-				
 				titleScreenControl.draw();
+				break;
 				
-//				if (keyCode == KeyCode.SPACE) {
-//					state = State.Playing;
-//					gameBoard.generateNewPieces();
-//				} else if (keyCode == KeyCode.ESCAPE) {
-//					stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-//				}
+			case ClientConnectionSetup:
+				clientConnectionController.draw(currentNanoTime);
 				break;
 //			case Playing:
 //				gameBoard.resetWater();
@@ -151,6 +160,8 @@ public class MainController {
 //				gameBoard.updateFadingPieces();
 //				handleMouseInput();
 //				break;
+			default:
+				break;
 			}
 		}
 	}

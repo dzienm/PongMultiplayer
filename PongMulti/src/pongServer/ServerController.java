@@ -145,12 +145,16 @@ public class ServerController {
 			try{
 				serverPort = Integer.parseInt(serverView.getTextField().getText());
 				if(serverPort<1||serverPort>65535){
-					throw new Exception();
+					throw new IllegalStateException();
 				}
 				startServer();
 			}
-			catch(Exception e){
+			catch(IllegalStateException e){
 				AlertBox.showAndWait(AlertType.ERROR, "Pong", "Bad value entered. Try again."); 
+				reset();
+			}
+			catch(NumberFormatException ex){
+				AlertBox.showAndWait(AlertType.ERROR, "Pong", "Not an integer entered. Try again."); 
 				reset();
 			}
 			
@@ -219,8 +223,8 @@ public class ServerController {
 						PongBall pileczka = (PongBall) pileczkaReader.readObject();
 						System.out.println("Odebralem pileczke predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
 						pileczka.setVelocity(2*pileczka.getVelocityX(), 2*pileczka.getVelocityY());
-						//System.out.println("Wysylam pilke predkosc x 2");
-						//pileczkaWriter.writeObject(pileczka);
+						System.out.println("Wysylam pilke predkosc x 2");
+						pileczkaWriter.writeObject(pileczka);
 					}
 					catch(IOException ex){
 						System.out.println("Connection lost.");
@@ -261,7 +265,7 @@ public class ServerController {
 		};
 
 		clientThread = new Thread(clientListener);
-		connectionThreads.put(clientThread.getId(), clientThread);
+		//connectionThreads.put(clientThread.getId(), clientThread);
 		clientThread.start();
 
 

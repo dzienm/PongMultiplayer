@@ -107,13 +107,15 @@ public class TitleScreenView {
 			titleController.openServer();});
         
         findServerText = new Text();              
-        findServerText.setText("Find servers");       
+        findServerText.setText("Start client");       
         findServerText.setFill(Color.LAWNGREEN);       
         findServerText.setFont(Font.font("null", FontWeight.BOLD, 30));
         findServerText.setEffect(mb);
         findServerText.setTranslateX(370);       
         findServerText.setTranslateY(405);
         findServerText.setVisible(false);
+        findServerText.setOnMousePressed(e -> {
+			titleController.openClient();});
         
         creditsText = new Text();              
         creditsText.setText("Credits");       
