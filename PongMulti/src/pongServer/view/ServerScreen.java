@@ -34,7 +34,12 @@ public class ServerScreen {
 	private Text serverStateText;
 	private Text serverStartedText;
 	private Text waitingConnectionText;
+	private Text clientConnectedText;
 	
+	public Text getClientConnectedText() {
+		return clientConnectedText;
+	}
+
 	public Text getWaitingConnectionText() {
 		return waitingConnectionText;
 	}
@@ -111,6 +116,17 @@ public class ServerScreen {
         waitingConnectionText.setTranslateY(460);
         waitingConnectionText.setVisible(false);
         
+        clientConnectedText = new Text();
+        clientConnectedText.setText("Client connected."); 
+        clientConnectedText.setX(0.0f);        
+        clientConnectedText.setY(0.0f);        
+        clientConnectedText.setFill(Color.LAWNGREEN);       
+        clientConnectedText.setFont(Font.font("null", FontWeight.BOLD, 24));
+        clientConnectedText.setEffect(mb);
+        clientConnectedText.setTranslateX(220);       
+        clientConnectedText.setTranslateY(460);
+        clientConnectedText.setVisible(false);
+        
         
         startServerButton = new Button();
         startServerButton.setTranslateX(500);
@@ -146,6 +162,7 @@ public class ServerScreen {
 		root.getChildren().add(serverPortText);
 		root.getChildren().add(serverStateText);
 		root.getChildren().add(serverStartedText);
+		root.getChildren().add(clientConnectedText);
 		root.getChildren().add(waitingConnectionText);
 		root.getChildren().add(startServerButton);
 		root.getChildren().add(stopServerButton);

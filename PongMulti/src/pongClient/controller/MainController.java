@@ -24,6 +24,10 @@ public class MainController {
 	private TitleScreenController titleScreenControl; //kazdy kontroler z animacja trzeba deklarowac albo miec oddzielne klasy gameAnimationTimer
 	private ServerController serverController;
 	
+	public void setServerController(ServerController serverController) {
+		this.serverController = serverController;
+	}
+
 	private Image gameIcon;
 	
 	public MainController(Stage _stage)
@@ -44,7 +48,7 @@ public class MainController {
 		primaryStage.show();
 		
 		this.titleScreenControl = new TitleScreenController(this);
-		serverController = new ServerController();
+		serverController = new ServerController(this);
 		
 		//do wykomentowania to co ponizej
 		serverController.initialize();

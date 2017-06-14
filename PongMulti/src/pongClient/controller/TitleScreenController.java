@@ -4,9 +4,7 @@ import java.io.File;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
 import pongClient.view.TitleScreenView;
-import pongServer.ServerController;
 
 //warto przyjrzec sie patternowi Dependency Injection/ Inversion of Control
 
@@ -35,7 +33,6 @@ public class TitleScreenController {
 	}
 	
 	public void draw() {
-		//TODO rysowanie okna
 		
 		
 		if(timeElapsed == 15){
