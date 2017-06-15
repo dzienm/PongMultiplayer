@@ -17,9 +17,20 @@ public class PongRacket {
 	private int bounceNumber;	//zmienna stosowana do statystyk aktywnosci poszczegolnych graczy
 	private Bloom racketBloom;
 
+	private boolean isHorizontalBoundary;
+	
+	public boolean isHorizontalBoundary() {
+		return isHorizontalBoundary;
+	}
+
+	public void setHorizontalBoundary(boolean isHorizontalBoundary) {
+		this.isHorizontalBoundary = isHorizontalBoundary;
+	}
+
 	public PongRacket(){
 		loadContent();
 		initialize();
+		isHorizontalBoundary = false;
 	}
 	
 	public void setHeight(int h){
@@ -79,31 +90,38 @@ public class PongRacket {
 		bounceNumber++;
 	}
 	
-	public boolean intersectBall(PongBall ball){
-		
+	public boolean intersectBall(PongBall ball) {
+
 		boolean collisionDetected = false;
-		
+
 		Shape intersect = Shape.intersect(this.racket, ball.getBall());
-        if (intersect.getBoundsInLocal().getWidth() != -1) {
-          collisionDetected = true;
-          
-          int vX = ball.getVelocityX();
-          int vY = ball.getVelocityY();
-          
-          
-          double ballY = ball.getBall().getCenterY();
-          double racketCenterY = racket.getTranslateY() + racket.getHeight()/2;
-          double angle = (racketCenterY - ballY)/(racket.getHeight()/2) * Math.PI/2;
-          
-          double modulusV = Math.sqrt(vX*vX + vY*vY);
-          double sign_vX = Math.signum(vX);
-                    
-          vX = (int) (Math.cos(angle)*modulusV);
-          vX = - (int) (vX * sign_vX);
-          vY = (int) (Math.sin(angle)*modulusV);
-          ball.setVelocity(vX, vY);
-        }
-        
-        return collisionDetected;
+		if (intersect.getBoundsInLocal().getWidth() != -1) {
+			collisionDetected = true;
+
+			int vX = ball.getVelocityX();
+			int vY = ball.getVelocityY();
+
+			if (isHorizontalBoundary) {
+				vY = -vY;
+			} 
+			else {
+
+				double ballY = ball.getBall().getCenterY();
+				double racketCenterY = racket.getTranslateY() + racket.getHeight() / 2;
+				double angle = (racketCenterY - ballY) / (racket.getHeight() / 2) * Math.PI / 2;
+
+				double modulusV = Math.sqrt(vX * vX + vY * vY);
+				double sign_vX = Math.signum(vX);
+
+				vX = (int) (Math.cos(angle) * modulusV);
+				vX = -(int) (vX * sign_vX);
+				vY = (int) (Math.sin(angle) * modulusV);
+				
+			}
+			
+			ball.setVelocity(vX, vY);
+		}
+
+		return collisionDetected;
 	}
 }

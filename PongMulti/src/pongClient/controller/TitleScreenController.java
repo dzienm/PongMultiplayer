@@ -67,7 +67,7 @@ public class TitleScreenController {
 		
 		//do wyrzucenia
 		//openServer();
-		openClient();
+		//openClient();
 	}
 	
 	private void loadContent(){

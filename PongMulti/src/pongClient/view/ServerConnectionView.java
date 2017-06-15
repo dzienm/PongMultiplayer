@@ -31,7 +31,15 @@ public class ServerConnectionView {
 	
 	private Button backButton;
 	private TextField textFieldIp;
+	public TextField getTextFieldIp() {
+		return textFieldIp;
+	}
+
 	private TextField textFieldPort;
+	public TextField getTextFieldPort() {
+		return textFieldPort;
+	}
+
 	private Button connectButton;
 	
 	public ServerConnectionView(ServerConnectionController _controller){

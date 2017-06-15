@@ -24,6 +24,9 @@ public class ServerConnectionController {
 	private long timeElapsed;
 	private long secondsElapsed;
 	
+	private String serverIp;
+	private int serverPort;
+	
 	private Media soundcsgo;
 	private MediaPlayer musicPlayer;
 	
@@ -66,29 +69,34 @@ public class ServerConnectionController {
 
 	public static boolean validIP(String ip) {
 
-		try {
-			if (ip == null || ip.isEmpty()) {
-				return false;
-			}
+		if (ip.equals("localhost")) {
+			return true;
+		} else {
 
-			String[] parts = ip.split("\\.");
-			if (parts.length != 4) {
-				return false;
-			}
-
-			for (String s : parts) {
-				int i = Integer.parseInt(s);
-				if ((i < 0) || (i > 255)) {
+			try {
+				if (ip == null || ip.isEmpty()) {
 					return false;
 				}
-			}
-			if (ip.endsWith(".")) {
+
+				String[] parts = ip.split("\\.");
+				if (parts.length != 4) {
+					return false;
+				}
+
+				for (String s : parts) {
+					int i = Integer.parseInt(s);
+					if ((i < 0) || (i > 255)) {
+						return false;
+					}
+				}
+				if (ip.endsWith(".")) {
+					return false;
+				}
+
+				return true;
+			} catch (NumberFormatException nfe) {
 				return false;
 			}
-
-			return true;
-		} catch (NumberFormatException nfe) {
-			return false;
 		}
 	}
 	
@@ -142,7 +150,21 @@ public class ServerConnectionController {
 
 
 	public void connectButtonPressed() {
-		// TODO Auto-generated method stub
+		if(validIP(connectionView.getTextFieldIp().getText())&&validPort(connectionView.getTextFieldPort().getText())){
+			
+			serverIp = connectionView.getTextFieldIp().getText();
+			serverPort = Integer.parseInt(connectionView.getTextFieldPort().getText());
+			connectServer();
+			
+		}
+		else{
+			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Bad values entered. Try again.");
+			connectionView.initialize();
+		}
+		
+	}
+	
+	private void connectServer(){
 		
 	}
 
