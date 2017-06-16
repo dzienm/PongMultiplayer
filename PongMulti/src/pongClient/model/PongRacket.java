@@ -1,17 +1,24 @@
 package pongClient.model;
 
+import java.io.Serializable;
+
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.BoxBlur;
 //import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+//import javafx.scene.shape.Circle;
 //import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class PongRacket {
+public class PongRacket implements Serializable{
 
-	private Rectangle racket;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8035467035245885622L;
+
+	private transient Rectangle racket;
 	//private Image racketBackground;
 	
 	private int bounceNumber;	//zmienna stosowana do statystyk aktywnosci poszczegolnych graczy
@@ -108,13 +115,22 @@ public class PongRacket {
 
 				double ballY = ball.getBall().getCenterY();
 				double racketCenterY = racket.getTranslateY() + racket.getHeight() / 2;
-				double angle = (racketCenterY - ballY) / (racket.getHeight() / 2) * Math.PI / 2;
+				double angle = (ballY - racketCenterY) / (racket.getHeight() / 2) * 90 / 360.0 * 2* Math.PI;
 
+				if(Math.abs(angle)>60){
+					if(angle>0){
+						angle = angle - 30.0;
+					}
+					else{
+						angle = angle + 30.0;
+					}
+				}
+				
 				double modulusV = Math.sqrt(vX * vX + vY * vY);
 				double sign_vX = Math.signum(vX);
 
 				vX = (int) (Math.cos(angle) * modulusV);
-				vX = -(int) (vX * sign_vX);
+				vX = -1 * (int) (vX * sign_vX);
 				vY = (int) (Math.sin(angle) * modulusV);
 				
 			}

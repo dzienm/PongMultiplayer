@@ -2,11 +2,15 @@ package pongClient.controller;
 
 
 import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
 
+import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -22,10 +26,20 @@ public class ServerConnectionController {
 	private GameAnimationTimer animationTimer;
 	private Stage stage;
 	private long timeElapsed;
-	private long secondsElapsed;
 	
 	private String serverIp;
 	private int serverPort;
+	
+	private Socket socket;
+	
+	public Socket getSocket() {
+		return socket;
+	}
+
+	private UserInputQueue userInputQueue;
+	public UserInputQueue getUserInputQueue() {
+		return userInputQueue;
+	}
 	
 	private Media soundcsgo;
 	private MediaPlayer musicPlayer;
@@ -39,6 +53,7 @@ public class ServerConnectionController {
 	public ServerConnectionController(TitleScreenController controller) {
 		mainController = controller;
 		animationTimer = new GameAnimationTimer();
+		userInputQueue = new UserInputQueue();
 	}
 
 	public void initialize(){
@@ -58,13 +73,19 @@ public class ServerConnectionController {
 
 	public void draw(){
 		
+		KeyCode keyCode = userInputQueue.getKeyCode();
+		
+		if (keyCode == KeyCode.ESCAPE) {
+			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+		}
+		
 		if(timeElapsed == 1){
 			musicPlayer = new MediaPlayer(soundcsgo);
 			musicPlayer.play();
 		}
 		
 		timeElapsed++;
-		secondsElapsed = timeElapsed/60;
+		
 	}
 
 	public static boolean validIP(String ip) {
@@ -132,7 +153,7 @@ public class ServerConnectionController {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				if (AlertBox.showAndWait(AlertType.CONFIRMATION, "Pong", "Do you want to close the server?")
+				if (AlertBox.showAndWait(AlertType.CONFIRMATION, "Pong", "Do you want to close the program?")
 						.orElse(ButtonType.CANCEL) == ButtonType.OK) {
 					stage.close();	
 				}
@@ -142,13 +163,17 @@ public class ServerConnectionController {
 
 
 	public void backButtonPressed() {
-		musicPlayer.stop();
-		animationTimer.stop();
+		stop();
 		mainController.initialize();
 		
 	}
 
-
+	private void stop(){
+		musicPlayer.stop();
+		animationTimer.stop();
+	}
+	
+	
 	public void connectButtonPressed() {
 		if(validIP(connectionView.getTextFieldIp().getText())&&validPort(connectionView.getTextFieldPort().getText())){
 			
@@ -164,8 +189,18 @@ public class ServerConnectionController {
 		
 	}
 	
-	private void connectServer(){
+	public void connectServer(){
+		/*try {
+			socket = new Socket(serverIp, serverPort);
+		} catch (IOException e) {
+			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't connect to the server.");
+			//e.printStackTrace();
+			initialize();
+		}*/
 		
+		stop();
+		ClientGameController gameViewControl = new ClientGameController(this);
+		gameViewControl.initialize();
 	}
 
 	
