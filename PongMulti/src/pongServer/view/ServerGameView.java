@@ -1,4 +1,4 @@
-package pongClient.view;
+package pongServer.view;
 
 import java.util.Random;
 
@@ -14,14 +14,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import pongClient.controller.ClientGameController;
 import pongClient.model.PongBall;
 import pongClient.model.PongRacket;
+import pongServer.ServerGameController;
 
-public class ClientGameView {
+public class ServerGameView {
 
 	private Image background;
-	private ClientGameController clientController;
+	private ServerGameController gameController;
 	
 	private final int boardWidth;
 	public int getBoardWidth() {
@@ -84,8 +84,8 @@ public class ClientGameView {
 		return ball;
 	}
 	
-	public ClientGameView(ClientGameController clientGameController){
-		this.clientController = clientGameController;
+	public ServerGameView(ServerGameController serverGameController){
+		gameController = serverGameController;
 		boardWidth = GameUtilitiesVariables.gameBoardWidth;
 		boardHeight = GameUtilitiesVariables.gameBoardHeight;
 		initialBallSpeed = GameUtilitiesVariables.initialBallSpeed;
@@ -96,7 +96,6 @@ public class ClientGameView {
 		
 		loadContent();
 		
-        
         MotionBlur mb = new MotionBlur();       
         mb.setRadius(5.0f);       
         mb.setAngle(90.0f);
@@ -165,6 +164,17 @@ public class ClientGameView {
 		double alphaRad = 2 * Math.PI * alpha/360.0;
 		ball.setVelocity(new Integer((int) (initialBallSpeed*Math.cos(alphaRad))),new Integer((int) (initialBallSpeed*Math.sin(alphaRad))));
 		
+		
+		/*Random randomizer = new Random();
+
+		int alpha = randomizer.nextInt(11);
+		alpha = alpha - 20;
+		if (alpha < 0) {
+			ball.setVelocity(-1 * initialBallSpeed, 0);
+		} else {
+			ball.setVelocity(initialBallSpeed, 0);
+		}*/
+		
 		canvas = new Canvas(boardWidth + 15,boardHeight + 15);	
 		
 		root = new Pane();
@@ -183,9 +193,9 @@ public class ClientGameView {
 		root.getChildren().add(ball.getBall());
 		
 		scene = new Scene(root,boardWidth,boardHeight);
-		scene.setOnKeyPressed(keyEvent -> clientController.getUserInputQueue().addKey(keyEvent));
+		scene.setOnKeyPressed(keyEvent -> gameController.getUserInputQueue().addKey(keyEvent));
 		
-		stage = clientController.getStage();
+		stage = gameController.getStage();
 		stage.setScene(scene);
 		stage.setResizable(false);
 		

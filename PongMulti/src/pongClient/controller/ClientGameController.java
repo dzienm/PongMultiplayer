@@ -27,7 +27,7 @@ public class ClientGameController {
 	private GameAnimationTimer animationTimer;
 	private Stage stage;
 	private long timeElapsed;
-	private long secondsElapsed;
+	private double secondsElapsed;
 	
 	private int racketSpeed;
 	
@@ -157,7 +157,7 @@ public class ClientGameController {
 		gameView.getPongBall().updatePosition();
 		
 		timeElapsed++;
-		secondsElapsed = timeElapsed/60;
+		secondsElapsed = timeElapsed/60.0;
 	}
 
 

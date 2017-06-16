@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import pongClient.model.PongBall;
+import pongClient.model.PongRacket;
 
 public class SimpleTwoWayClient {
 
@@ -39,7 +40,8 @@ public class SimpleTwoWayClient {
 		System.out.println("Czekam na pilke...");
 		pileczka = (PongBall) pileczkaReader.readObject();
 		System.out.println("Odebralem pilke. Jej predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
-		
+		PongRacket rakietka = (PongRacket) pileczkaReader.readObject();
+		System.out.println("Odebralem rakietke."); 
 		Thread.sleep(2000);
 		}
 	}

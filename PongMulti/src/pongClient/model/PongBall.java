@@ -13,10 +13,19 @@ public class PongBall implements Serializable{
 	 */
 	private static final long serialVersionUID = -2224822418047337630L;
 	
-	private transient Circle ball; //transient potrzebne do serializacji
-	private int velocityX;
-	private int velocityY;
+	private transient Circle ball; 
 	
+	private double velocityX;
+	private double velocityY;
+	
+	public double getPositionX() {
+		return ball.getCenterX();
+	}
+
+	public double getPositionY() {
+		return ball.getCenterY();
+	}
+
 	public Circle getBall() {
 		return ball;
 	}
@@ -25,7 +34,7 @@ public class PongBall implements Serializable{
 		initialize();
 	}
 	
-	public void setPosition(int x, int y){
+	public void setPosition(double x, double y){
 		ball.setCenterX(x);
 		ball.setCenterY(y);
 	}
@@ -48,16 +57,16 @@ public class PongBall implements Serializable{
 		ball.setEffect(bb);      		 
 	}
 	
-	public void setVelocity(int vX,int vY){
+	public void setVelocity(double vX,double vY){
 		velocityX = vX;
 		velocityY = vY;
 	}
 	
-	public int getVelocityX() {
+	public double getVelocityX() {
 		return velocityX;
 	}
 
-	public int getVelocityY() {
+	public double getVelocityY() {
 		return velocityY;
 	}
 

@@ -19,10 +19,17 @@ public class PongRacket implements Serializable{
 	private static final long serialVersionUID = 8035467035245885622L;
 
 	private transient Rectangle racket;
+	public double getPositionX(){
+		return racket.getTranslateX();
+	}
+	public double getPositionY(){
+		return racket.getTranslateY();
+	}
+	
 	//private Image racketBackground;
 	
 	private int bounceNumber;	//zmienna stosowana do statystyk aktywnosci poszczegolnych graczy
-	private Bloom racketBloom;
+	private transient Bloom racketBloom;
 
 	private boolean isHorizontalBoundary;
 	
@@ -48,7 +55,7 @@ public class PongRacket implements Serializable{
 		racket.setWidth(w);
 	}
 	
-	public void setPosition(int x, int y){
+	public void setPosition(double x, double y){
 		racket.setTranslateX(x);
 		racket.setTranslateY(y);
 	}
@@ -105,8 +112,8 @@ public class PongRacket implements Serializable{
 		if (intersect.getBoundsInLocal().getWidth() != -1) {
 			collisionDetected = true;
 
-			int vX = ball.getVelocityX();
-			int vY = ball.getVelocityY();
+			double vX = ball.getVelocityX();
+			double vY = ball.getVelocityY();
 
 			if (isHorizontalBoundary) {
 				vY = -vY;
@@ -115,9 +122,9 @@ public class PongRacket implements Serializable{
 
 				double ballY = ball.getBall().getCenterY();
 				double racketCenterY = racket.getTranslateY() + racket.getHeight() / 2;
-				double angle = (ballY - racketCenterY) / (racket.getHeight() / 2) * 90 / 360.0 * 2* Math.PI;
+				double angle = (ballY - racketCenterY) / (racket.getHeight() / 2) * 90.0;
 
-				if(Math.abs(angle)>60){
+				if(Math.abs(angle)>60 ){
 					if(angle>0){
 						angle = angle - 30.0;
 					}
@@ -126,13 +133,19 @@ public class PongRacket implements Serializable{
 					}
 				}
 				
+				angle = angle / 360.0 * 2 * Math.PI;
+				
 				double modulusV = Math.sqrt(vX * vX + vY * vY);
 				double sign_vX = Math.signum(vX);
 
-				vX = (int) (Math.cos(angle) * modulusV);
+				/*vX = (int) (Math.cos(angle) * modulusV);
 				vX = -1 * (int) (vX * sign_vX);
-				vY = (int) (Math.sin(angle) * modulusV);
+				vY = (int) (Math.sin(angle) * modulusV);*/
 				
+				vX = Math.cos(angle) * modulusV;
+				vX = -1.0 * vX * sign_vX;
+				vY = Math.sin(angle) * modulusV;
+						
 			}
 			
 			ball.setVelocity(vX, vY);

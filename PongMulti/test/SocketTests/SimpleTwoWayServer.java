@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javafx.scene.shape.Circle;
 import pongClient.model.PongBall;
+import pongClient.model.PongRacket;
 
 public class SimpleTwoWayServer {
 
@@ -37,9 +39,13 @@ public class SimpleTwoWayServer {
 			
 			PongBall pileczka = (PongBall) pileczkaReader.readObject();
 			System.out.println("Odebralem pileczke predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
+			Circle okrag = pileczka.getBall();
 			pileczka.setVelocity(2*pileczka.getVelocityX(), 2*pileczka.getVelocityY());
 			System.out.println("Wysylam pilke predkosc x 2");
 			pileczkaWriter.writeObject(pileczka);
+			PongRacket rakietka = new PongRacket();
+			System.out.println("Wysylam rakietke");
+			pileczkaWriter.writeObject(rakietka);
 			}
 			catch(IOException ex){
 				System.out.println("Utracono polaczenie.");

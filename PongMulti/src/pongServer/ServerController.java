@@ -1,14 +1,6 @@
 package pongServer;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.HashMap;
-
+import gameUtilities.GameUtilitiesVariables;
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -18,7 +10,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pongClient.controller.TitleScreenController;
-import pongClient.model.PongBall;
 import pongServer.view.ServerScreen;
 import utilityWindows.AlertBox;
 
@@ -27,41 +18,40 @@ public class ServerController {
 	private Stage serverStage;
 	private TitleScreenController mainController; //byc moze niepotrzebny jesli otwierany jako oddzielne okno
 	
-	private HashMap<Long,Thread> connectionThreads;
 	
 	private UserInputQueue userInputQueue;
 	private GameAnimationTimer animationTimer;
-	
-	private int serverPort;
+	public GameAnimationTimer getAnimationTimer() {
+		return animationTimer;
+	}
+
+private int serverPort;
 	public int getServerPort() {
 		return serverPort;
 	}
 
+private ServerStateEnum serverState;
+public ServerStateEnum getServerState() {
+	return serverState;
+}
+public void setServerState(ServerStateEnum serverState) {
+	this.serverState = serverState;
+}
 
-	private ServerSocket serverPong;
-	private ServerStateEnum serverState;
-	
 	private int totalSecondsLapsed;
 	private long startNanoTime;
 	
 	ServerScreen serverView;
 
-	private Socket clientSocket;
-
-	private ObjectOutputStream dataWriter;
-	private ObjectInputStream dataReader;
 	
-	private Thread clientThread;
 	
 	public ServerController(TitleScreenController _controller) {
-		serverStage = new Stage();
-		animationTimer = new GameAnimationTimer();
 		mainController = _controller;
+		serverStage = _controller.getStage();
+		animationTimer = new GameAnimationTimer();
 	}
 
 	public void initialize(){
-		
-		System.setProperty("sun.net.useExclusiveBind", "false"); //konieczne dla ustawienia setReusePort
 		
 		serverStage.setTitle("PongServerApp");
 		serverStage.setOnCloseRequest(e -> stage_CloseRequest(e));
@@ -79,7 +69,7 @@ public class ServerController {
 		
 	}
 	
-	private void reset(){
+	public void reset(){
 		serverState = ServerStateEnum.NotConnected;
 		serverView = new ServerScreen(this);
 		serverView.initialize();
@@ -142,23 +132,14 @@ public class ServerController {
 
 
 	public void startServerButtonPressed() {
-			try{
-				serverPort = Integer.parseInt(serverView.getTextField().getText());
-				if(serverPort<1||serverPort>65535){
-					throw new IllegalStateException();
-				}
-				startServer();
-			}
-			catch(IllegalStateException e){
-				AlertBox.showAndWait(AlertType.ERROR, "Pong", "Bad value entered. Try again."); 
-				reset();
-			}
-			catch(NumberFormatException ex){
-				AlertBox.showAndWait(AlertType.ERROR, "Pong", "Not an integer entered. Try again."); 
-				reset();
-			}
-			
-			
+		if(GameUtilitiesVariables.validPort(serverView.getTextField().getText())){
+			serverPort = Integer.parseInt(serverView.getTextField().getText());
+			startServer();
+		}
+		else{
+			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Bad value entered. Try again."); 
+			reset();
+		}
 	}
 
 	public void updateTotalTime(long currentNanoTime) {
@@ -172,121 +153,28 @@ public class ServerController {
 
 	private void startServer() {
 		
-		serverView.getStartServerButton().setVisible(false);
-		serverView.getStopServerButton().setVisible(true);
+		serverState = ServerGameController.initializeConnection(serverPort);
 		
-		
-		try {
-			
-			serverPong = new ServerSocket();
-			serverPong.setReuseAddress(true);
-			serverPong.bind(new InetSocketAddress(serverPort));
-			serverState = ServerStateEnum.Initialized;
-			clientCommChannels();
-		} catch (IOException e) {
+		if(serverState == ServerStateEnum.NotConnected){
 			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't start the server.");
-			e.printStackTrace();
 			reset();
 		}
-		
-		
-	}
-
-	private void clientCommChannels() {
-
-
-		Runnable clientListener = new Runnable(){
-
-			@Override
-			public void run() {
-				try {
-					System.out.println("Czekam na polaczenie");
-					clientSocket = serverPong.accept();
-					serverState = ServerStateEnum.ConnectionEstablished;
-					//dataWriter = new ObjectOutputStream(clientSocket.getOutputStream());
-					//dataReader = new ObjectInputStream(clientSocket.getInputStream());
-					//serverState = ServerStateEnum.ConnectionEstablished;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//AlertBox.showAndWait(AlertType.ERROR, "Pong", "Connection lost.");
-					e.printStackTrace();
-					reset();
-					
-				} 
-				while(true){
-
-					try{
-
-						ObjectOutputStream pileczkaWriter = new ObjectOutputStream(clientSocket.getOutputStream());
-						ObjectInputStream pileczkaReader = new ObjectInputStream(clientSocket.getInputStream());
-
-						PongBall pileczka = (PongBall) pileczkaReader.readObject();
-						System.out.println("Odebralem pileczke predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
-						pileczka.setVelocity(2*pileczka.getVelocityX(), 2*pileczka.getVelocityY());
-						System.out.println("Wysylam pilke predkosc x 2");
-						pileczkaWriter.writeObject(pileczka);
-					}
-					catch(IOException ex){
-						System.out.println("Connection lost.");
-						serverState = ServerStateEnum.NotConnected;
-						//reset();
-						break;
-					}
-
-					catch (ClassNotFoundException e) {
-						System.out.println("Program error. Illegal request sent to the server.");
-						e.printStackTrace();
-					}
-
-				}
-				//try{
-					//serverPong.close();
-					
-				//}
-				//catch(IOException ex1){}
-			/*	try {
-					serverPong.close();
-				} catch (IOException ex) {
-					AlertBox.showAndWait(AlertType.ERROR, "Pong", "Error when closing the server.");
-					ex.printStackTrace();
-				}*/
-				
-				
-				//ObjectInputStream pileczkaReader = new ObjectInputStream(clientSocket.getInputStream());
-
-				//PongBall pileczka = (PongBall) pileczkaReader.readObject();
-				//System.out.println("Odebralem pileczke predkosc: Vx = " + pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
-
-				//dataFlow();
-				
-
-			}
-
-		};
-
-		clientThread = new Thread(clientListener);
-		//connectionThreads.put(clientThread.getId(), clientThread);
-		clientThread.start();
-
-
-
-	}
-
-	private void dataFlow() {
-		while(true){
-			try {
-				dataWriter.writeObject(serverState);
-			} catch (IOException e) {
-				
-				e.printStackTrace();
-			}
+		else{
+			serverState = ServerStateEnum.Initialized;
+			serverView.getStartServerButton().setVisible(false);
+			serverView.getStopServerButton().setVisible(true);
+			ServerGameController serverGame = new ServerGameController(this);
+			serverGame.initialize();
 		}
 		
+		
 	}
+
+	
 
 	public void stopServerButtonPressed() {
 
-		clientThread.interrupt();
+		//clientThread.interrupt();
 		reset();
 		//mainController.setServerController(new ServerController(mainController));
 		//mainController.getServerController().initialize();

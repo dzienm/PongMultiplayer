@@ -1,5 +1,6 @@
 package pongClient.view;
 
+import gameUtilities.GameUtilitiesVariables;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -112,21 +113,21 @@ public class TitleScreenView {
         
         racket_1 = new PongRacket();
 		racket_1.setRacketFill(Color.SKYBLUE);
-		racket_1.setHeight(100);
-		racket_1.setWidth(22);
+		racket_1.setHeight(GameUtilitiesVariables.racketHeight);
+		racket_1.setWidth(GameUtilitiesVariables.racketWidth);
 		racket_1.setPosition(180, 200);
 		racket_1.getRacket().setVisible(false);
 		
         racket_2 = new PongRacket();
 		racket_2.setRacketFill(Color.LIGHTCORAL);
-		racket_2.setHeight(100);
-		racket_2.setWidth(22);
+		racket_2.setHeight(GameUtilitiesVariables.racketHeight);
+		racket_2.setWidth(GameUtilitiesVariables.racketWidth);
 		racket_2.setPosition(900 - 180, 200);
 		racket_2.getRacket().setVisible(false);
 		
 		ball_1 = new PongBall();
 		ball_1.setBallFill(Color.LAWNGREEN);
-		ball_1.setRadius(10);
+		ball_1.setRadius(GameUtilitiesVariables.ballRadius);
 		ball_1.setPosition(180 + (900 - 360)/2, 250);
 		ball_1.setVelocity(-2, 0);
 		ball_1.getBall().setVisible(false);

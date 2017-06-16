@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
+import gameUtilities.GameUtilitiesVariables;
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -88,54 +89,7 @@ public class ServerConnectionController {
 		
 	}
 
-	public static boolean validIP(String ip) {
 
-		if (ip.equals("localhost")) {
-			return true;
-		} else {
-
-			try {
-				if (ip == null || ip.isEmpty()) {
-					return false;
-				}
-
-				String[] parts = ip.split("\\.");
-				if (parts.length != 4) {
-					return false;
-				}
-
-				for (String s : parts) {
-					int i = Integer.parseInt(s);
-					if ((i < 0) || (i > 255)) {
-						return false;
-					}
-				}
-				if (ip.endsWith(".")) {
-					return false;
-				}
-
-				return true;
-			} catch (NumberFormatException nfe) {
-				return false;
-			}
-		}
-	}
-	
-	public static boolean validPort(String _port){
-		try{
-			int serverPort = Integer.parseInt(_port);
-			if(serverPort<1||serverPort>65535){
-				return false;
-			}
-			else{
-				return true;
-			}
-			
-		}
-		catch(NumberFormatException e){
-			return false;
-		}
-	}
 	
 	private class GameAnimationTimer extends AnimationTimer {
 
@@ -175,7 +129,7 @@ public class ServerConnectionController {
 	
 	
 	public void connectButtonPressed() {
-		if(validIP(connectionView.getTextFieldIp().getText())&&validPort(connectionView.getTextFieldPort().getText())){
+		if(GameUtilitiesVariables.validIP(connectionView.getTextFieldIp().getText())&&GameUtilitiesVariables.validPort(connectionView.getTextFieldPort().getText())){
 			
 			serverIp = connectionView.getTextFieldIp().getText();
 			serverPort = Integer.parseInt(connectionView.getTextFieldPort().getText());

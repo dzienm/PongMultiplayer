@@ -1,11 +1,13 @@
 package pongServer;
 
-public enum ServerStateEnum {
+import java.io.Serializable;
+
+public enum ServerStateEnum implements Serializable{
 		
 		NotConnected,
 		Initialized, 
 		ConnectionEstablished, 
-		StreamStarted;
+		GameStarted;
 }
 	
 
