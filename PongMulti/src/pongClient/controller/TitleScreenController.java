@@ -13,6 +13,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import pongClient.view.Credits;
 import pongClient.view.TitleScreenView;
 import pongServer.ServerController;
 import utilityWindows.AlertBox;
@@ -164,9 +165,12 @@ public class TitleScreenController {
 		
 	}
 
-	
-	public void playPressed() {
-		System.out.println("wcisnieto");
+	/**
+	 * Metoda wywolujaca ekran informacji o grze.
+	 */
+	public void openCredits() {
+		Credits credits = new Credits();
+		credits.start();
 	}
 	
 	/**

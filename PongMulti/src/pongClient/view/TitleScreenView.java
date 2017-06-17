@@ -118,7 +118,7 @@ public class TitleScreenView {
         creditsText.setTranslateY(435);
         creditsText.setVisible(false);
         creditsText.setOnMousePressed(e -> {
-			titleController.playPressed();});
+			titleController.openCredits();});
         
         racket_1 = new PongRacket();
 		racket_1.setRacketFill(Color.SKYBLUE);
