@@ -410,24 +410,23 @@ public class ServerGameController {
 						@Override
 						public void run() {
 							initialize();
-						} 
+						}
 					});
 
 				} catch (IOException e) {
-					// AlertBox.showAndWait(AlertType.ERROR, "Pong", "Connection
-					// lost.");
-					e.printStackTrace();
-					// reset();
 					try {
 						serverPong.close();
 					} catch (IOException e1) {
-						e1.printStackTrace();
+
 					}
-					serverController.reset();
-					// ServerController newServer = new ServerController(new
-					// TitleScreenController(new Stage()));
-					// newServer.initialize();
-					stage.close();
+					
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							AlertBox.showAndWait(AlertType.ERROR, "Pong", "Connection lost.");
+							System.exit(0);
+						}
+					});
 
 				}
 
@@ -437,16 +436,11 @@ public class ServerGameController {
 
 						switch (serverController.getServerState()) {
 
-						case Initialized:
-							break;
-
 						case ConnectionEstablished:
-							// objectWriter.writeObject(serverController.getServerState());
 							exchangeData();
 							break;
 
 						case GameStarted:
-							// objectWriter.writeObject(serverController.getServerState());
 							exchangeData();
 							break;
 
@@ -466,67 +460,38 @@ public class ServerGameController {
 
 					} catch (IOException ex) {
 						System.out.println("Connection lost.");
-						serverController.reset();
-						clientThread.interrupt();
-						stage.close();
+						try {
+							serverPong.close();
+						} catch (IOException e) {
+						}
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								AlertBox.showAndWait(AlertType.ERROR, "Pong", "Connection lost. Press OK to close the application.");
+								System.exit(0);
+							}
+						});
+						animationTimer.stop();
 						break;
+						
 					}
 
 				}
-				// try{
-				// serverPong.close();
-
-				// }
-				// catch(IOException ex1){}
-				/*
-				 * try { serverPong.close(); } catch (IOException ex) {
-				 * AlertBox.showAndWait(AlertType.ERROR, "Pong",
-				 * "Error when closing the server."); ex.printStackTrace(); }
-				 */
-
-				// ObjectInputStream pileczkaReader = new
-				// ObjectInputStream(clientSocket.getInputStream());
-
-				// PongBall pileczka = (PongBall) pileczkaReader.readObject();
-				// System.out.println("Odebralem pileczke predkosc: Vx = " +
-				// pileczka.getVelocityX() + "Vy = " + pileczka.getVelocityY());
-
-				// dataFlow();
 
 			}
 
+			/**
+			 * Metoda komunikacji pomiedzy serwerem i klientem za pomoca
+			 * strumieni
+			 * 
+			 * @author mdziendzikowski
+			 * @throws IOException
+			 */
 			private void exchangeData() throws IOException {
 				objectWriter.writeObject(serverController.getServerState());
-				// clientRacketPosX = dataReader.readDouble();
-				// clientRacketPosY = dataReader.readDouble();
-				// setClientRacketPos(clientRacketPosX,clientRacketPosY);
-				/*
-				 * Platform.runLater(new Runnable(){
-				 * 
-				 * @Override public void run() {
-				 * gameView.getClientRacket().setPosition( clientRacketPosX,
-				 * clientRacketPosY); } });
-				 */
-				// gameView.getClientRacket().setPosition(clientRacketPosX,
-				// clientRacketPosY); //w ten sposob jest zle
-				// renderowanie, trzeba albo przez Platform.Later
-				// albo przez synchronizacje
 				clientRacketPosX = dataReader.readDouble();
 				clientRacketPosY = dataReader.readDouble();
 				setClientRacketPos(clientRacketPosX, clientRacketPosY);
-
-				// to co ponizej trzeba obejsc przez runable albo
-				// synchronizacje
-				/*
-				 * Platform.runLater(new Runnable() {
-				 * 
-				 * @Override public void run() { serverRacketX =
-				 * gameView.getServerRacket().getPositionX(); serverRacketY =
-				 * gameView.getServerRacket().getPositionY(); ballX =
-				 * gameView.getPongBall().getPositionX(); ballY =
-				 * gameView.getPongBall().getPositionY(); } });
-				 */
-
 				double serverRacketX = gameView.getServerRacket().getPositionX();
 				double serverRacketY = gameView.getServerRacket().getPositionY();
 				double ballX = gameView.getPongBall().getPositionX();
@@ -541,7 +506,6 @@ public class ServerGameController {
 				dataWriter.writeInt(clientScore);
 				dataWriter.writeBoolean(getScored());
 				if (getScored()) {
-					// System.out.println("Bramka u serwera.");
 					setScored(false);
 				}
 			}
@@ -555,15 +519,17 @@ public class ServerGameController {
 
 	/**
 	 * Metoda inicjalizujaca gniazdo serwera gry.
+	 * 
 	 * @author mdziendzikowski
-	 * @param _port port na ktorym nasluchuje serwer
+	 * @param _port
+	 *            port na ktorym nasluchuje serwer
 	 * @return stan serwera
 	 */
 	public ServerStateEnum initializeConnection(int _port) {
 		try {
-			//konieczne dla ustawienia setReuseAddress
+			// konieczne dla ustawienia setReuseAddress
 			System.setProperty("sun.net.useExclusiveBind", "false");
-			
+
 			serverPong = new ServerSocket();
 			serverPong.setReuseAddress(true);
 			serverPong.bind(new InetSocketAddress(_port));
