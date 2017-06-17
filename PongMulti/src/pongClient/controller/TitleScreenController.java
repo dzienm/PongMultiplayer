@@ -153,6 +153,7 @@ public class TitleScreenController {
 	}
 	
 	public void openServer(){
+		close();
 		ServerController serverControl = new ServerController(this);
 		serverControl.initialize();
 	}

@@ -131,11 +131,11 @@ public class ClientGameController {
 			keyboardController();
 			exchangeData();
 			if(scored){
-				System.out.println("Bramka.");
+				//System.out.println("Bramka.");
 				gameView.getClientRacket().getRacket().setTranslateX(GameUtilitiesVariables.initialRacketBoundaryOffset);
 				gameView.getClientRacket().getRacket().setTranslateY(GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 				//setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
-				gameView.initialize();
+				//gameView.initialize();
 				//gameView = new ClientGameView(this);
 				//gameView.initialize();
 			}
@@ -153,6 +153,11 @@ public class ClientGameController {
 
 		case GameOver:
 			exchangeData();
+			gameView.getGameStatusText().setText("Game over.");
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 100);
+			gameView.getGameStatusText().setVisible(true);
+			gameView.getGameOverText().setVisible(true);
+			gameView.getGameOverText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
 			break;
 
 		default:

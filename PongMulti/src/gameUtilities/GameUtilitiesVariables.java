@@ -19,6 +19,7 @@ public final class GameUtilitiesVariables {
 	public static final int lowerBoundOffset = 15;
 	public static final int upperBoundOffset = 10;
 	
+	public static final int maxscore = 10;
 	
 	
 	private GameUtilitiesVariables(){

@@ -1,12 +1,15 @@
 package pongServer;
 
+import java.io.File;
+
 import gameUtilities.GameUtilitiesVariables;
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
-
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pongClient.controller.TitleScreenController;
@@ -20,6 +23,9 @@ public class ServerController {
 													// otwierany jako oddzielne
 													// okno
 
+	private Media soundcsgo;
+	private MediaPlayer musicPlayer;
+		
 	private ServerGameController serverGame;
 
 	private UserInputQueue userInputQueue;
@@ -52,7 +58,7 @@ public class ServerController {
 
 	public ServerController(TitleScreenController _controller) {
 		mainController = _controller;
-		serverStage = _controller.getStage();
+		
 		animationTimer = new GameAnimationTimer();
 	}
 
@@ -61,11 +67,15 @@ public class ServerController {
 	 * @author mdziendzikowski
 	 */
 	public void initialize() {
-
+		serverStage = mainController.getStage();
 		serverStage.setTitle("PongServerApp");
 		serverStage.setOnCloseRequest(e -> stage_CloseRequest(e));
 		serverStage.show();
 
+		soundcsgo = new Media(new File("resources/sounds/csgoFindServer.mp3").toURI().toString());
+		musicPlayer = new MediaPlayer(soundcsgo);
+		musicPlayer.play();
+		
 		serverPort = -1;
 		serverState = ServerStateEnum.NotConnected;
 		totalSecondsLapsed = 0;
@@ -116,6 +126,14 @@ public class ServerController {
 			serverView.getStartGameButton().setVisible(true);
 			break;
 
+		case GameOver:
+			serverView.getStopGameButton().setVisible(false);
+			serverView.getRestartGameButton().setVisible(true);
+			musicPlayer = new MediaPlayer(soundcsgo);
+			musicPlayer.play();
+			animationTimer.stop();
+			break;
+			
 		default:
 			break;
 		}
@@ -171,9 +189,10 @@ public class ServerController {
 		if (serverState == ServerStateEnum.NotConnected) {
 			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't start the server.");
 			reset();
-		} else {
+		} 
+		else {
 			serverView.getStartServerButton().setVisible(false);
-			serverView.getStopServerButton().setVisible(true);
+		//	serverView.getStopServerButton().setVisible(true);
 		}
 
 	}
@@ -200,6 +219,7 @@ public class ServerController {
 
 
 	public void startGameButtonPressed() {
+		musicPlayer.stop();
 		serverState = ServerStateEnum.GameStarted;
 		serverView.getStartGameButton().setVisible(false);
 		serverView.getStopGameButton().setVisible(true);
@@ -209,6 +229,18 @@ public class ServerController {
 		serverState = ServerStateEnum.GamePaused;
 		serverView.getStartGameButton().setVisible(true);
 		serverView.getStopGameButton().setVisible(false);
+		musicPlayer = new MediaPlayer(soundcsgo);
+		musicPlayer.play();
+	}
+	
+	public void restartGameButtonPressed() {
+		serverView.getStopGameButton().setVisible(true);
+		serverView.getRestartGameButton().setVisible(false);
+		musicPlayer.stop();
+		serverGame.resetScore();
+		serverGame.getGameView().initialize();
+		serverState = ServerStateEnum.GameStarted;
+		animationTimer.start();
 	}
 	
 	private class GameAnimationTimer extends AnimationTimer {
@@ -220,6 +252,8 @@ public class ServerController {
 		}
 
 	}
+
+
 
 
 }

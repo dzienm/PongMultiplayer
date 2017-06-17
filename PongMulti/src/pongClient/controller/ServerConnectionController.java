@@ -60,6 +60,8 @@ public class ServerConnectionController {
 	public void initialize(){
 		
 		soundcsgo = new Media(new File("resources/sounds/csgoFindServer.mp3").toURI().toString());
+		musicPlayer = new MediaPlayer(soundcsgo);
+		musicPlayer.play();
 		
 		stage = mainController.getStage();
 		stage.setTitle("PongClientApp");
@@ -78,11 +80,6 @@ public class ServerConnectionController {
 		
 		if (keyCode == KeyCode.ESCAPE) {
 			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-		}
-		
-		if(timeElapsed == 1){
-			musicPlayer = new MediaPlayer(soundcsgo);
-			musicPlayer.play();
 		}
 		
 		timeElapsed++;

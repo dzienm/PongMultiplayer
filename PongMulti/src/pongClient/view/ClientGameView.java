@@ -69,6 +69,11 @@ public class ClientGameView {
 		return gameInfoText;
 	}
 	
+	private Text gameOverText;
+	public Text getGameOverText() {
+		return gameOverText;
+	}
+	
 	private PongRacket clientRacket;
 	public PongRacket getClientRacket() {
 		return clientRacket;
@@ -146,6 +151,15 @@ public class ClientGameView {
         gameInfoText.setTranslateY(600);
         gameInfoText.setVisible(false);
         
+        gameOverText = new Text();              
+        gameOverText.setText("Restart or close the game.");       
+        gameOverText.setFill(Color.LIGHTCORAL);       
+        gameOverText.setFont(Font.font("null", FontWeight.BOLD, 24));
+        gameOverText.setEffect(mb);
+        gameOverText.setTranslateX(boardWidth/2 - 130);       
+        gameOverText.setTranslateY(600);
+        gameOverText.setVisible(false);
+        
         clientRacket = new PongRacket();
         clientRacket.setRacketFill(Color.SKYBLUE);
         clientRacket.setHeight(GameUtilitiesVariables.racketHeight);
@@ -210,6 +224,7 @@ public class ClientGameView {
 		root.getChildren().add(serverScoreText);
 		root.getChildren().add(gameStatusText);
 		root.getChildren().add(gameInfoText);
+		root.getChildren().add(gameOverText);
 		root.getChildren().add(ball.getBall());
 		
 		scene = new Scene(root,boardWidth,boardHeight);

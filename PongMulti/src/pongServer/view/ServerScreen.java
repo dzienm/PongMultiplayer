@@ -30,8 +30,11 @@ public class ServerScreen {
 	private GraphicsContext graphicsContext;
 	private TextField textField;
 	private Button startServerButton;
-	private Button stopServerButton;
+	//private Button stopServerButton;
 	private Button startGameButton;
+	private Button restartGameButton;
+
+
 	private Button stopGameButton;
 	private Text serverStateText;
 	private Text serverStartedText;
@@ -58,7 +61,7 @@ public class ServerScreen {
 		Text serverPortText = new Text();
 		serverPortText.setX(0.0f);        
         serverPortText.setY(0.0f);        
-        serverPortText.setText("Specify the server port (default 8000):");       
+        serverPortText.setText("Specify the server port (default 8989):");       
         serverPortText.setFill(Color.LAWNGREEN);       
         serverPortText.setFont(Font.font("null", FontWeight.BOLD, 30));
 		serverPortText.setEffect(mb);
@@ -126,7 +129,7 @@ public class ServerScreen {
         startServerButton.setOnMousePressed(e -> {
 			serverController.startServerButtonPressed();});
         
-        stopServerButton = new Button();
+       /* stopServerButton = new Button();
         stopServerButton.setTranslateX(500);
         stopServerButton.setTranslateY(316);
         stopServerButton.setPrefWidth(250);
@@ -135,7 +138,7 @@ public class ServerScreen {
         stopServerButton.setOnMousePressed(e -> {
 			serverController.stopServerButtonPressed();});
         stopServerButton.setId("stopServerButton");
-        stopServerButton.setVisible(false);
+        stopServerButton.setVisible(false);*/
         
         startGameButton = new Button();
         startGameButton.setTranslateX(220);
@@ -159,6 +162,17 @@ public class ServerScreen {
 			serverController.stopGameButtonPressed();});
         stopGameButton.setVisible(false);
         
+        restartGameButton = new Button();
+        restartGameButton.setTranslateX(220);
+        restartGameButton.setTranslateY(480);
+        restartGameButton.setPrefWidth(250);
+        restartGameButton.setFont(Font.font("null", FontWeight.BOLD, 24));
+        restartGameButton.setText("Restart game");
+        restartGameButton.setId("startServerButton");
+        restartGameButton.setOnMousePressed(e -> {
+			serverController.restartGameButtonPressed();});
+        restartGameButton.setVisible(false);
+        
 		canvas = new Canvas(1115,615);	
 		
 		root = new Pane();
@@ -175,7 +189,8 @@ public class ServerScreen {
 		root.getChildren().add(clientConnectedText);
 		root.getChildren().add(waitingConnectionText);
 		root.getChildren().add(startServerButton);
-		root.getChildren().add(stopServerButton);
+		root.getChildren().add(restartGameButton);
+		//root.getChildren().add(stopServerButton);
 		root.getChildren().add(startGameButton);
 		root.getChildren().add(stopGameButton);
 				
@@ -213,9 +228,9 @@ public class ServerScreen {
 		return textField;
 	}
 	
-	public Button getStopServerButton() {
+	/*public Button getStopServerButton() {
 		return stopServerButton;
-	}
+	}*/
 
 	public Button getStartServerButton() {
 		return startServerButton;
@@ -223,6 +238,10 @@ public class ServerScreen {
 
 	public Button getStartGameButton() {
 		return startGameButton;
+	}
+	
+	public Button getRestartGameButton() {
+		return restartGameButton;
 	}
 	
 	public Button getStopGameButton() {

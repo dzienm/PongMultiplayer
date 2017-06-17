@@ -29,6 +29,10 @@ public class ServerGameController {
 
 	private ServerController serverController;
 	private ServerGameView gameView;
+	public ServerGameView getGameView() {
+		return gameView;
+	}
+
 	private GameAnimationTimer animationTimer;
 	private Stage stage;
 	private long timeElapsed;
@@ -140,6 +144,12 @@ public class ServerGameController {
 
 	}
 
+	public void resetScore(){
+		clientScore = 0;
+		serverScore = 0;
+		
+	}
+	
 	public void draw() {
 
 		switch (serverController.getServerState()) {
@@ -160,6 +170,9 @@ public class ServerGameController {
 			gameView.getPongBall().updatePosition();
 			soundHandle();
 			scoreUpdate();
+			if(clientScore >= GameUtilitiesVariables.maxscore || serverScore >= GameUtilitiesVariables.maxscore){
+				serverController.setServerState(ServerStateEnum.GameOver);
+			}
 			break;
 
 		case GamePaused:
@@ -171,6 +184,11 @@ public class ServerGameController {
 			break;
 
 		case GameOver:
+			gameView.getGameStatusText().setText("Game over.");
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 100);
+			gameView.getGameStatusText().setVisible(true);
+			gameView.getGameOverText().setVisible(true);
+			gameView.getGameOverText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
 			break;
 
 		default:
@@ -186,8 +204,7 @@ public class ServerGameController {
 		if (gameView.getPongBall().getBall().getCenterX() < 0) {
 			serverScore++;
 			gameView.initialize();
-			gameView.getClientScoreText().setText("" + clientScore);
-			gameView.getServerScoreText().setText("" + serverScore);
+			
 			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 			// gameView.getPongBall().setVelocity(-1 *
 			// gameView.getInitialBallSpeed(), 0);
@@ -200,8 +217,8 @@ public class ServerGameController {
 			clientScore++;
 			gameView.initialize();
 			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
-			gameView.getClientScoreText().setText("" + clientScore);
-			gameView.getServerScoreText().setText("" + serverScore);
+			//gameView.getClientScoreText().setText("" + clientScore);
+			//gameView.getServerScoreText().setText("" + serverScore);
 			//setClientRacketPos(gameView.getClientRacket().getPositionX(), gameView.getClientRacket().getPositionY());
 			// gameView.getPongBall().setVelocity(gameView.getInitialBallSpeed(),
 			// 0);
@@ -209,6 +226,9 @@ public class ServerGameController {
 			setScored(true);
 			//System.out.println("Bramka (nieprzechywcona)");
 		}
+		
+		gameView.getClientScoreText().setText("" + clientScore);
+		gameView.getServerScoreText().setText("" + serverScore);
 		//else{
 		//	scored = false;
 		//}
