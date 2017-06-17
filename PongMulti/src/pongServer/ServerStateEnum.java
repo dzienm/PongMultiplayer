@@ -7,7 +7,9 @@ public enum ServerStateEnum implements Serializable{
 		NotConnected,
 		Initialized, 
 		ConnectionEstablished, 
-		GameStarted;
+		GameStarted,
+		GamePaused,
+		GameOver;
 }
 	
 

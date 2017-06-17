@@ -121,7 +121,7 @@ public class ServerGameView {
         clientRacket.setRacketFill(Color.SKYBLUE);
         clientRacket.setHeight(GameUtilitiesVariables.racketHeight);
         clientRacket.setWidth(GameUtilitiesVariables.racketWidth);
-        clientRacket.setPosition(GameUtilitiesVariables.initialRacketBoundaryOffset, boardHeight/2 - GameUtilitiesVariables.racketHeight);
+        clientRacket.setPosition(GameUtilitiesVariables.initialRacketBoundaryOffset, boardHeight/2 - GameUtilitiesVariables.racketHeight/2);
         
         serverRacket = new PongRacket();
         serverRacket.setRacketFill(Color.LIGHTCORAL);

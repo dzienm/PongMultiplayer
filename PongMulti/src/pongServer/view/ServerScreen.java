@@ -31,26 +31,14 @@ public class ServerScreen {
 	private TextField textField;
 	private Button startServerButton;
 	private Button stopServerButton;
+	private Button startGameButton;
+	private Button stopGameButton;
 	private Text serverStateText;
 	private Text serverStartedText;
 	private Text waitingConnectionText;
 	private Text clientConnectedText;
 	
-	public Text getClientConnectedText() {
-		return clientConnectedText;
-	}
 
-	public Text getWaitingConnectionText() {
-		return waitingConnectionText;
-	}
-
-	public Text getServerStartedText() {
-		return serverStartedText;
-	}
-
-	public TextField getTextField() {
-		return textField;
-	}
 
 	public ServerScreen(ServerController _controller){
 		
@@ -149,7 +137,29 @@ public class ServerScreen {
         stopServerButton.setId("stopServerButton");
         stopServerButton.setVisible(false);
         
-		canvas = new Canvas(1115,615);	
+        startGameButton = new Button();
+        startGameButton.setTranslateX(220);
+        startGameButton.setTranslateY(480);
+        startGameButton.setPrefWidth(250);
+        startGameButton.setFont(Font.font("null", FontWeight.BOLD, 24));
+        startGameButton.setText("Start game");
+        startServerButton.setId("startServerButton");
+        startGameButton.setOnMousePressed(e -> {
+			serverController.startGameButtonPressed();});
+        startGameButton.setVisible(false);
+        
+        stopGameButton = new Button();
+        stopGameButton.setTranslateX(220);
+        stopGameButton.setTranslateY(480);
+        stopGameButton.setPrefWidth(250);
+        stopGameButton.setFont(Font.font("null", FontWeight.BOLD, 24));
+        stopGameButton.setText("Pause game");
+        stopGameButton.setId("stopServerButton");
+        stopGameButton.setOnMousePressed(e -> {
+			serverController.stopGameButtonPressed();});
+        stopGameButton.setVisible(false);
+        
+		canvas = new Canvas(1115,715);	
 		
 		root = new Pane();
 
@@ -166,9 +176,10 @@ public class ServerScreen {
 		root.getChildren().add(waitingConnectionText);
 		root.getChildren().add(startServerButton);
 		root.getChildren().add(stopServerButton);
-		
+		root.getChildren().add(startGameButton);
+		root.getChildren().add(stopGameButton);
 				
-		scene = new Scene(root,1100,600);
+		scene = new Scene(root,1100,700);
 		scene.setOnKeyPressed(keyEvent -> {
 			if(keyEvent.getCode() == KeyCode.ESCAPE){
 				stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
@@ -186,6 +197,22 @@ public class ServerScreen {
 		return serverStateText;
 	}
 
+	public Text getClientConnectedText() {
+		return clientConnectedText;
+	}
+
+	public Text getWaitingConnectionText() {
+		return waitingConnectionText;
+	}
+
+	public Text getServerStartedText() {
+		return serverStartedText;
+	}
+
+	public TextField getTextField() {
+		return textField;
+	}
+	
 	public Button getStopServerButton() {
 		return stopServerButton;
 	}
@@ -194,6 +221,14 @@ public class ServerScreen {
 		return startServerButton;
 	}
 
+	public Button getStartGameButton() {
+		return startGameButton;
+	}
+	
+	public Button getStopGameButton() {
+		return stopGameButton;
+	}
+	
 	private void loadContent(){
 		this.background = new Image("textures/titleScreen/main.png");
 	}

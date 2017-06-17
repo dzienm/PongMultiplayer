@@ -144,17 +144,17 @@ public class ServerConnectionController {
 	}
 	
 	public void connectServer(){
-		/*try {
+		try {
 			socket = new Socket(serverIp, serverPort);
+			stop();
+			ClientGameController gameViewControl = new ClientGameController(this);
+			gameViewControl.initialize();
 		} catch (IOException e) {
 			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't connect to the server.");
 			//e.printStackTrace();
 			initialize();
-		}*/
-		
-		stop();
-		ClientGameController gameViewControl = new ClientGameController(this);
-		gameViewControl.initialize();
+		}
+			
 	}
 
 	
