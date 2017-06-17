@@ -128,6 +128,7 @@ public class ClientGameController {
 		case GameStarted:
 			gameView.getGameStatusText().setVisible(false);
 			gameView.getGameInfoText().setVisible(false);
+			gameView.getGameOverText().setVisible(false);
 			keyboardController();
 			exchangeData();
 			if(scored){

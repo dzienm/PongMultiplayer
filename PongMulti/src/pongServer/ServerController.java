@@ -192,6 +192,7 @@ public class ServerController {
 		} 
 		else {
 			serverView.getStartServerButton().setVisible(false);
+			serverView.getMainMenuButton().setVisible(false);
 		//	serverView.getStopServerButton().setVisible(true);
 		}
 
@@ -253,7 +254,11 @@ public class ServerController {
 
 	}
 
-
+	public void mainMenuButtonPressed() {
+		musicPlayer.stop();
+		animationTimer.stop();
+		mainController.initialize();
+	}
 
 
 }

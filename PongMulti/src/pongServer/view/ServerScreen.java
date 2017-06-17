@@ -30,6 +30,8 @@ public class ServerScreen {
 	private GraphicsContext graphicsContext;
 	private TextField textField;
 	private Button startServerButton;
+	private Button mainMenuButton;
+
 	//private Button stopServerButton;
 	private Button startGameButton;
 	private Button restartGameButton;
@@ -75,8 +77,8 @@ public class ServerScreen {
         serverStateText.setFill(Color.RED);       
         serverStateText.setFont(Font.font("null", FontWeight.BOLD, 24));
         serverStateText.setEffect(mb);
-        serverStateText.setTranslateX(770);       
-        serverStateText.setTranslateY(355);
+        serverStateText.setTranslateX(220);       
+        serverStateText.setTranslateY(420);
         
         textField = new TextField();
         textField.setTranslateX(220);
@@ -128,6 +130,15 @@ public class ServerScreen {
         startServerButton.setId("startServerButton");
         startServerButton.setOnMousePressed(e -> {
 			serverController.startServerButtonPressed();});
+        
+        mainMenuButton = new Button();
+        mainMenuButton.setTranslateX(770);
+        mainMenuButton.setTranslateY(316);
+        mainMenuButton.setPrefWidth(250);
+        mainMenuButton.setFont(Font.font("null", FontWeight.BOLD, 24));
+        mainMenuButton.setText("Main menu");
+        mainMenuButton.setOnMousePressed(e -> {
+			serverController.mainMenuButtonPressed();});
         
        /* stopServerButton = new Button();
         stopServerButton.setTranslateX(500);
@@ -189,6 +200,7 @@ public class ServerScreen {
 		root.getChildren().add(clientConnectedText);
 		root.getChildren().add(waitingConnectionText);
 		root.getChildren().add(startServerButton);
+		root.getChildren().add(mainMenuButton);
 		root.getChildren().add(restartGameButton);
 		//root.getChildren().add(stopServerButton);
 		root.getChildren().add(startGameButton);
@@ -246,6 +258,10 @@ public class ServerScreen {
 	
 	public Button getStopGameButton() {
 		return stopGameButton;
+	}
+	
+	public Button getMainMenuButton() {
+		return mainMenuButton;
 	}
 	
 	private void loadContent(){
