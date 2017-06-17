@@ -159,7 +159,7 @@ public class ServerScreen {
 			serverController.stopGameButtonPressed();});
         stopGameButton.setVisible(false);
         
-		canvas = new Canvas(1115,715);	
+		canvas = new Canvas(1115,615);	
 		
 		root = new Pane();
 
@@ -179,7 +179,7 @@ public class ServerScreen {
 		root.getChildren().add(startGameButton);
 		root.getChildren().add(stopGameButton);
 				
-		scene = new Scene(root,1100,700);
+		scene = new Scene(root,1100,600);
 		scene.setOnKeyPressed(keyEvent -> {
 			if(keyEvent.getCode() == KeyCode.ESCAPE){
 				stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));

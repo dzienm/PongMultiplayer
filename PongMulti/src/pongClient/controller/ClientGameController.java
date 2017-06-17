@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import gameUtilities.GameUtilitiesVariables;
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -43,6 +44,8 @@ public class ClientGameController {
 	private Socket socket;
 	private ServerStateEnum serverState;
 
+	private boolean scored;
+	
 	private ObjectOutputStream objectWriter;
 	private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;
@@ -65,6 +68,7 @@ public class ClientGameController {
 		userInputQueue = new UserInputQueue();
 		// clientScore = 0;
 		// serverScore = 0;
+		scored = false;
 	}
 
 	public void initialize() {
@@ -97,6 +101,9 @@ public class ClientGameController {
 
 		try {
 			serverState = (ServerStateEnum) objectReader.readObject();
+			if(timeElapsed%60 == 0){
+				System.out.println("Stan serwera (u klienta):" + serverState.toString());
+			}
 			// dataWriter.writeDouble(gameView.getClientRacket().getPositionX());
 			// dataWriter.writeDouble(gameView.getClientRacket().getPositionY());
 		} catch (ClassNotFoundException e) {
@@ -110,18 +117,39 @@ public class ClientGameController {
 		switch (serverState) {
 
 		case ConnectionEstablished:
+			gameView.getGameStatusText().setText("Waiting for the game to start.");
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 230);
+			gameView.getGameStatusText().setVisible(true);
+			gameView.getGameInfoText().setVisible(true);
+			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
+			exchangeData();
 			break;
 
 		case GameStarted:
+			gameView.getGameStatusText().setVisible(false);
+			gameView.getGameInfoText().setVisible(false);
 			keyboardController();
 			exchangeData();
+			if(scored){
+				gameView.getClientRacket().getRacket().setTranslateX(GameUtilitiesVariables.initialRacketBoundaryOffset);
+				gameView.getClientRacket().getRacket().setTranslateY(GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
+				//setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
+				gameView.initialize();
+			}
 			soundHandle();
 			break;
 
 		case GamePaused:
+			gameView.getGameStatusText().setText("Game paused.");
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 130);
+			gameView.getGameStatusText().setVisible(true);
+			gameView.getGameInfoText().setVisible(true);
+			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
+			exchangeData();
 			break;
 
 		case GameOver:
+			exchangeData();
 			break;
 
 		default:
@@ -149,6 +177,7 @@ public class ClientGameController {
 			int clientScore = (int) dataReader.readInt();
 			gameView.getServerScoreText().setText("" + serverScore);
 			gameView.getClientScoreText().setText("" + clientScore);
+			scored = (boolean) dataReader.readBoolean();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

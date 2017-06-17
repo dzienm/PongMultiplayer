@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import gameUtilities.GameUtilitiesVariables;
 import gameUtilities.UserInputQueue;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -72,6 +73,8 @@ public class ServerGameController {
 	private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;
 	private DataInputStream dataReader;
+	
+	private boolean scored;
 
 	private Thread clientThread;
 
@@ -104,15 +107,17 @@ public class ServerGameController {
 		animationTimer = new GameAnimationTimer();
 		// socket = controller.getSocket();
 		userInputQueue = new UserInputQueue();
-		clientScore = 0;
-		serverScore = 0;
-
+		
 	}
 
 	public void initialize() {
 
 		soundPop = new Media(new File("resources/sounds/Blop.mp3").toURI().toString());
 
+		clientScore = 0;
+		serverScore = 0;
+		scored = false;
+		
 		stage = new Stage();
 		stage.setTitle("PongServerGameApp");
 		stage.setOnCloseRequest(e -> stage_CloseRequest(e));
@@ -131,23 +136,29 @@ public class ServerGameController {
 		switch (serverController.getServerState()) {
 
 		case ConnectionEstablished:
-			
+			gameView.getGameStatusText().setText("Waiting for the game to start.");
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 230);  
+			gameView.getGameStatusText().setVisible(true);
+			gameView.getGameInfoText().setVisible(true);
+			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
 			break;
 
 		case GameStarted:
+			gameView.getGameStatusText().setVisible(false);
+			gameView.getGameInfoText().setVisible(false);
 			keyboardController();
 			gameView.getClientRacket().setPosition(getClientRacketPosX(), getClientRacketPosY());
 			gameView.getPongBall().updatePosition();
-
-			// gameView.getClientRacket().setPosition(clientRacketPosX,
-			// clientRacketPosY); //tak tez jest dobrze - nie jest dobrze tylko jak
-			// watek inny niz JavaFX wywoluje
 			soundHandle();
 			scoreUpdate();
-			
 			break;
 
 		case GamePaused:
+			gameView.getGameStatusText().setText("Game paused.");
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 130);
+			gameView.getGameStatusText().setVisible(true);
+			gameView.getGameInfoText().setVisible(true);
+			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
 			break;
 
 		case GameOver:
@@ -168,17 +179,25 @@ public class ServerGameController {
 			gameView.initialize();
 			gameView.getClientScoreText().setText("" + clientScore);
 			gameView.getServerScoreText().setText("" + serverScore);
+			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 			// gameView.getPongBall().setVelocity(-1 *
 			// gameView.getInitialBallSpeed(), 0);
+			scored = true;
 		}
 
-		if (gameView.getPongBall().getBall().getCenterX() > gameView.getBoardWidth()) {
+		else if (gameView.getPongBall().getBall().getCenterX() > gameView.getBoardWidth()) {
 			clientScore++;
 			gameView.initialize();
+			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 			gameView.getClientScoreText().setText("" + clientScore);
 			gameView.getServerScoreText().setText("" + serverScore);
+			//setClientRacketPos(gameView.getClientRacket().getPositionX(), gameView.getClientRacket().getPositionY());
 			// gameView.getPongBall().setVelocity(gameView.getInitialBallSpeed(),
 			// 0);
+			scored = true;
+		}
+		else{
+			scored = false;
 		}
 	}
 
@@ -325,21 +344,21 @@ public class ServerGameController {
 							break;
 
 						case ConnectionEstablished:
-							objectWriter.writeObject(serverController.getServerState());
-							//exchangeData();
+							//objectWriter.writeObject(serverController.getServerState());
+							exchangeData();
 							break;
 
 						case GameStarted:
-							objectWriter.writeObject(serverController.getServerState());
+							//objectWriter.writeObject(serverController.getServerState());
 							exchangeData();
 							break;
 
 						case GamePaused:
-							objectWriter.writeObject(serverController.getServerState());
+							exchangeData();
 							break;
 
 						case GameOver:
-							objectWriter.writeObject(serverController.getServerState());
+							exchangeData();
 							break;
 
 						default:
@@ -424,6 +443,7 @@ public class ServerGameController {
 				dataWriter.writeDouble(clientRacketPosY);
 				dataWriter.writeInt(serverScore);
 				dataWriter.writeInt(clientScore);
+				dataWriter.writeBoolean(scored);
 			}
 
 		};

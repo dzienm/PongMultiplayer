@@ -59,6 +59,16 @@ public class ServerGameView {
 		return serverScoreText;
 	}
 
+	private Text gameStatusText;
+	public Text getGameStatusText() {
+		return gameStatusText;
+	}
+
+	private Text gameInfoText;
+	public Text getGameInfoText() {
+		return gameInfoText;
+	}
+
 	private PongRacket clientRacket;
 	public PongRacket getClientRacket() {
 		return clientRacket;
@@ -108,6 +118,22 @@ public class ServerGameView {
         clientScoreText.setEffect(mb);
         clientScoreText.setTranslateX(boardWidth/2 - 75);       
         clientScoreText.setTranslateY(70);
+        
+        gameStatusText = new Text();              
+        gameStatusText.setText("");       
+        gameStatusText.setFill(Color.LAWNGREEN);       
+        gameStatusText.setFont(Font.font("null", FontWeight.BOLD, 38));
+        gameStatusText.setEffect(mb);
+        gameStatusText.setTranslateX(boardWidth/2 - 230);       
+        gameStatusText.setTranslateY(500);
+        
+        gameInfoText = new Text();              
+        gameInfoText.setText("Press: up, down, left or right arrows, to go: up, down, left or right respectively.");       
+        gameInfoText.setFill(Color.LIGHTCORAL);       
+        gameInfoText.setFont(Font.font("null", FontWeight.BOLD, 24));
+        gameInfoText.setEffect(mb);
+        gameInfoText.setTranslateX(boardWidth/2 - 450);       
+        gameInfoText.setTranslateY(600);
        
         serverScoreText = new Text();              
         serverScoreText.setText("" + 0);       
@@ -190,6 +216,8 @@ public class ServerGameView {
 		root.getChildren().add(upperBound.getRacket());
 		root.getChildren().add(clientScoreText);
 		root.getChildren().add(serverScoreText);
+		root.getChildren().add(gameStatusText);
+		root.getChildren().add(gameInfoText);
 		root.getChildren().add(ball.getBall());
 		
 		scene = new Scene(root,boardWidth,boardHeight);
