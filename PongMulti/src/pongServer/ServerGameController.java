@@ -36,10 +36,10 @@ public class ServerGameController {
 	private ServerSocket serverPong;
 	private Socket clientSocket;
 
-	double serverRacketX;
+	/*double serverRacketX;
 	double serverRacketY;
 	double ballX;
-	double ballY;
+	double ballY;*/
 	
 	// zastosowanie metody synchronizacji wspolbieznej zapobiega zlemu
 	// wyswietlaniu paletki klienta
@@ -131,15 +131,7 @@ public class ServerGameController {
 		switch (serverController.getServerState()) {
 
 		case ConnectionEstablished:
-			keyboardController();
-			gameView.getClientRacket().setPosition(getClientRacketPosX(), getClientRacketPosY());
-			gameView.getPongBall().updatePosition();
-
-			// gameView.getClientRacket().setPosition(clientRacketPosX,
-			// clientRacketPosY); //tak tez jest dobrze - nie jest dobrze tylko jak
-			// watek inny niz JavaFX wywoluje
-			soundHandle();
-			scoreUpdate();
+			
 			break;
 
 		case GameStarted:
@@ -334,72 +326,12 @@ public class ServerGameController {
 
 						case ConnectionEstablished:
 							objectWriter.writeObject(serverController.getServerState());
-							// clientRacketPosX = dataReader.readDouble();
-							// clientRacketPosY = dataReader.readDouble();
-							// setClientRacketPos(clientRacketPosX,clientRacketPosY);
-							/*
-							 * Platform.runLater(new Runnable(){
-							 * 
-							 * @Override public void run() {
-							 * gameView.getClientRacket().setPosition(
-							 * clientRacketPosX, clientRacketPosY); } });
-							 */
-							// gameView.getClientRacket().setPosition(clientRacketPosX,
-							// clientRacketPosY); //w ten sposob jest zle
-							// renderowanie, trzeba albo przez Platform.Later
-							// albo przez synchronizacje
-							clientRacketPosX = dataReader.readDouble();
-							clientRacketPosY = dataReader.readDouble();
-							setClientRacketPos(clientRacketPosX, clientRacketPosY);
-
-							// to co ponizej trzeba obejsc przez runable albo
-							// synchronizacje
-							Platform.runLater(new Runnable() {
-
-								@Override
-								public void run() {
-									serverRacketX = gameView.getServerRacket().getPositionX();
-									serverRacketY = gameView.getServerRacket().getPositionY();
-									ballX = gameView.getPongBall().getPositionX();
-									ballY = gameView.getPongBall().getPositionY();
-								}
-							});
-							dataWriter.writeDouble(serverRacketX);
-							dataWriter.writeDouble(serverRacketY);
-							dataWriter.writeDouble(ballX);
-							dataWriter.writeDouble(ballY);
-							dataWriter.writeDouble(clientRacketPosX);
-							dataWriter.writeDouble(clientRacketPosY);
-							dataWriter.writeInt(serverScore);
-							dataWriter.writeInt(clientScore);
+							//exchangeData();
 							break;
 
 						case GameStarted:
 							objectWriter.writeObject(serverController.getServerState());
-							clientRacketPosX = dataReader.readDouble();
-							clientRacketPosY = dataReader.readDouble();
-							setClientRacketPos(clientRacketPosX, clientRacketPosY);
-
-							// to co ponizej trzeba obejsc przez runable albo
-							// synchronizacje
-							Platform.runLater(new Runnable() {
-
-								@Override
-								public void run() {
-									serverRacketX = gameView.getServerRacket().getPositionX();
-									serverRacketY = gameView.getServerRacket().getPositionY();
-									ballX = gameView.getPongBall().getPositionX();
-									ballY = gameView.getPongBall().getPositionY();
-								}
-							});
-							dataWriter.writeDouble(serverRacketX);
-							dataWriter.writeDouble(serverRacketY);
-							dataWriter.writeDouble(ballX);
-							dataWriter.writeDouble(ballY);
-							dataWriter.writeDouble(clientRacketPosX);
-							dataWriter.writeDouble(clientRacketPosY);
-							dataWriter.writeInt(serverScore);
-							dataWriter.writeInt(clientScore);
+							exchangeData();
 							break;
 
 						case GamePaused:
@@ -445,6 +377,53 @@ public class ServerGameController {
 
 				// dataFlow();
 
+			}
+
+			private void exchangeData() throws IOException {
+				objectWriter.writeObject(serverController.getServerState());
+				// clientRacketPosX = dataReader.readDouble();
+				// clientRacketPosY = dataReader.readDouble();
+				// setClientRacketPos(clientRacketPosX,clientRacketPosY);
+				/*
+				 * Platform.runLater(new Runnable(){
+				 * 
+				 * @Override public void run() {
+				 * gameView.getClientRacket().setPosition(
+				 * clientRacketPosX, clientRacketPosY); } });
+				 */
+				// gameView.getClientRacket().setPosition(clientRacketPosX,
+				// clientRacketPosY); //w ten sposob jest zle
+				// renderowanie, trzeba albo przez Platform.Later
+				// albo przez synchronizacje
+				clientRacketPosX = dataReader.readDouble();
+				clientRacketPosY = dataReader.readDouble();
+				setClientRacketPos(clientRacketPosX, clientRacketPosY);
+
+				// to co ponizej trzeba obejsc przez runable albo
+				// synchronizacje
+				/*Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						serverRacketX = gameView.getServerRacket().getPositionX();
+						serverRacketY = gameView.getServerRacket().getPositionY();
+						ballX = gameView.getPongBall().getPositionX();
+						ballY = gameView.getPongBall().getPositionY();
+					}
+				});*/
+				
+				double serverRacketX = gameView.getServerRacket().getPositionX();
+				double serverRacketY = gameView.getServerRacket().getPositionY();
+				double ballX = gameView.getPongBall().getPositionX();
+				double ballY = gameView.getPongBall().getPositionY();
+				dataWriter.writeDouble(serverRacketX);
+				dataWriter.writeDouble(serverRacketY);
+				dataWriter.writeDouble(ballX);
+				dataWriter.writeDouble(ballY);
+				dataWriter.writeDouble(clientRacketPosX);
+				dataWriter.writeDouble(clientRacketPosY);
+				dataWriter.writeInt(serverScore);
+				dataWriter.writeInt(clientScore);
 			}
 
 		};
