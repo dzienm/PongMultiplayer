@@ -166,6 +166,16 @@ public class PongRacket implements Serializable {
 	}
 
 	/**
+	 * Metoda ustawia liczbê odbiæ dla zamiennej obiektu rakieta.
+	 * 
+	 * @param bounceNumber
+	 *            liczba ca³kowita reprezentuj¹ca liczbê odbiæ
+	 */
+	public void setBounceNumber(int bounceNumber) {
+		this.bounceNumber = bounceNumber;
+	}
+	
+	/**
 	 * Wywo³anie metody powoduje inkrementacjê liczby odbiæ dla zmiennej obiektu
 	 * {@link PongRacket}.
 	 */
