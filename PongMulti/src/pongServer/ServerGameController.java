@@ -36,10 +36,18 @@ public class ServerGameController {
 	private ServerSocket serverPong;
 	private Socket clientSocket;
 
-	/*double serverRacketX;
+	private int serverStateOrdinal;
+	public int getServerStateOrdinal() {
+		return serverStateOrdinal;
+	}
+	public void setServerStateOrdinal(int serverStateOrdinal) {
+		this.serverStateOrdinal = serverStateOrdinal;
+	}
+
+	double serverRacketX;
 	double serverRacketY;
 	double ballX;
-	double ballY;*/
+	double ballY;
 	
 	// zastosowanie metody synchronizacji wspolbieznej zapobiega zlemu
 	// wyswietlaniu paletki klienta
@@ -68,8 +76,8 @@ public class ServerGameController {
 		this.clientRacketPosY = clientRacketPosY;
 	}
 
-	private ObjectOutputStream objectWriter;
-	private ObjectInputStream objectReader;
+	//private ObjectOutputStream objectWriter;
+	//private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;
 	private DataInputStream dataReader;
 
@@ -106,6 +114,7 @@ public class ServerGameController {
 		userInputQueue = new UserInputQueue();
 		clientScore = 0;
 		serverScore = 0;
+		serverStateOrdinal = ServerStateEnum.ConnectionEstablished.ordinal();
 
 	}
 
@@ -127,7 +136,7 @@ public class ServerGameController {
 	}
 
 	public void draw() {
-
+		
 		switch (serverController.getServerState()) {
 
 		case ConnectionEstablished:
@@ -282,8 +291,8 @@ public class ServerGameController {
 					System.out.println("Czekam na polaczenie");
 					clientSocket = serverPong.accept();
 					System.out.println("Polaczono.");
-					objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
-					objectReader = new ObjectInputStream(clientSocket.getInputStream());
+					//objectWriter = new ObjectOutputStream(clientSocket.getOutputStream());
+					//objectReader = new ObjectInputStream(clientSocket.getInputStream());
 					dataWriter = new DataOutputStream(clientSocket.getOutputStream());
 					dataReader = new DataInputStream(clientSocket.getInputStream());
 					serverController.setServerState(ServerStateEnum.ConnectionEstablished);
@@ -316,30 +325,35 @@ public class ServerGameController {
 				}
 
 				while (true) {
-
+					
+					ServerStateEnum serverState = ServerStateEnum.values()[serverStateOrdinal];
+					System.out.println("Ordinal serwera: " + serverStateOrdinal);
+					
 					try {
-
-						switch (serverController.getServerState()) {
+						
+						
+						switch (serverState) {
 
 						case Initialized:
 							break;
 
 						case ConnectionEstablished:
-							objectWriter.writeObject(serverController.getServerState());
+							dataWriter.writeInt(serverStateOrdinal);
 							//exchangeData();
 							break;
 
 						case GameStarted:
-							objectWriter.writeObject(serverController.getServerState());
+							dataWriter.writeInt(serverStateOrdinal);
+							System.out.println("Wyslalem:" + serverStateOrdinal);
 							exchangeData();
 							break;
 
 						case GamePaused:
-							objectWriter.writeObject(serverController.getServerState());
+							dataWriter.writeInt(serverStateOrdinal);
 							break;
 
 						case GameOver:
-							objectWriter.writeObject(serverController.getServerState());
+							dataWriter.writeInt(serverStateOrdinal);
 							break;
 
 						default:
@@ -380,7 +394,7 @@ public class ServerGameController {
 			}
 
 			private void exchangeData() throws IOException {
-				objectWriter.writeObject(serverController.getServerState());
+				//objectWriter.writeObject(serverController.getServerState());
 				// clientRacketPosX = dataReader.readDouble();
 				// clientRacketPosY = dataReader.readDouble();
 				// setClientRacketPos(clientRacketPosX,clientRacketPosY);
@@ -412,10 +426,10 @@ public class ServerGameController {
 					}
 				});*/
 				
-				double serverRacketX = gameView.getServerRacket().getPositionX();
-				double serverRacketY = gameView.getServerRacket().getPositionY();
-				double ballX = gameView.getPongBall().getPositionX();
-				double ballY = gameView.getPongBall().getPositionY();
+				serverRacketX = gameView.getServerRacket().getPositionX();
+				serverRacketY = gameView.getServerRacket().getPositionY();
+				ballX = gameView.getPongBall().getPositionX();
+				ballY = gameView.getPongBall().getPositionY();
 				dataWriter.writeDouble(serverRacketX);
 				dataWriter.writeDouble(serverRacketY);
 				dataWriter.writeDouble(ballX);

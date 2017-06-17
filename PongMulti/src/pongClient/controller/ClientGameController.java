@@ -43,8 +43,8 @@ public class ClientGameController {
 	private Socket socket;
 	private ServerStateEnum serverState;
 
-	private ObjectOutputStream objectWriter;
-	private ObjectInputStream objectReader;
+	//private ObjectOutputStream objectWriter;
+	//private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;
 	private DataInputStream dataReader;
 
@@ -72,8 +72,8 @@ public class ClientGameController {
 		soundPop = new Media(new File("resources/sounds/Blop.mp3").toURI().toString());
 
 		try {
-			objectWriter = new ObjectOutputStream(socket.getOutputStream());
-			objectReader = new ObjectInputStream(socket.getInputStream());
+			//objectWriter = new ObjectOutputStream(socket.getOutputStream());
+			//objectReader = new ObjectInputStream(socket.getInputStream());
 			dataWriter = new DataOutputStream(socket.getOutputStream());
 			dataReader = new DataInputStream(socket.getInputStream());
 		} catch (IOException e1) {
@@ -96,12 +96,14 @@ public class ClientGameController {
 	public void draw() {
 
 		try {
-			serverState = (ServerStateEnum) objectReader.readObject();
+			int ordinalState = dataReader.readInt();
+			//serverState = (ServerStateEnum) objectReader.readObject();
+			serverState = ServerStateEnum.values()[ordinalState];
+			//if(timeElapsed%60==0){
+			//System.out.println("Stan serwera u klienta:" + serverState.toString() + "ordinal: " + ordinalState);
+			//}
 			// dataWriter.writeDouble(gameView.getClientRacket().getPositionX());
 			// dataWriter.writeDouble(gameView.getClientRacket().getPositionY());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,6 +112,9 @@ public class ClientGameController {
 		switch (serverState) {
 
 		case ConnectionEstablished:
+			keyboardController();
+			exchangeData();
+			soundHandle();
 			break;
 
 		case GameStarted:

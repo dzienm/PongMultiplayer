@@ -201,6 +201,7 @@ public class ServerController {
 
 	public void startGameButtonPressed() {
 		serverState = ServerStateEnum.GameStarted;
+		serverGame.setServerStateOrdinal(ServerStateEnum.GameStarted.ordinal());
 		serverView.getStartGameButton().setVisible(false);
 		serverView.getStopGameButton().setVisible(true);
 	}
