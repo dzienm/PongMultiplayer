@@ -21,14 +21,25 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import pongClient.model.PongBall;
 import pongServer.view.ServerGameView;
 import utilityWindows.AlertBox;
 
+/**
+ * Klasa kontrolera serwera komunkacji i logiki gry. Dzialanie serwera opiera
+ * sie na wykorzystanie dwoch niezaleznych watkow. Jeden jest odpowiedzialny za
+ * komunikacje z klientem i wymiane informacji, drugi za wyswietlanie na ekranie
+ * gry zawartosci oraz aktualizacje stanu gry. Odswiezanie watku komunikacji
+ * jest sterowane petla gry aplikacji klienta, logika gry jest sterowana petla
+ * gry serwera.
+ * 
+ * @author mdziendzikowski
+ *
+ */
 public class ServerGameController {
 
 	private ServerController serverController;
 	private ServerGameView gameView;
+
 	public ServerGameView getGameView() {
 		return gameView;
 	}
@@ -41,33 +52,38 @@ public class ServerGameController {
 	private ServerSocket serverPong;
 	private Socket clientSocket;
 
-	/*double serverRacketX;
-	double serverRacketY;
-	double ballX;
-	double ballY;*/
-	
-	// zastosowanie metody synchronizacji wspolbieznej zapobiega zlemu
-	// wyswietlaniu paletki klienta
-
-	// ustawianie w watku spoza watku aplikacji JavaFX odpowiedzialnym za
-	// komunikacje z serwerem powodowalo wyswietlanie fragmentow rakietki
-	// w trakcie ruchu
-	// w sumie rozwiazalem to intuicyjnie - nie wiem do konca dlaczego tak jest
-	// dobrze, a moze platform.runlater tez zadziala?
-	// moze interfejs worker by byl dobry (to znaczy Task, w ktorym bylaby
-	// komunikacja)
 	private double clientRacketPosX;
 
+	/**
+	 * Klasa zwracajaca polozenie X paletki klienta w sposob synchroniczny
+	 * 
+	 * @author mdziendzikowski
+	 * @return polozenie X rakietki klienta
+	 */
 	public synchronized double getClientRacketPosX() {
 		return clientRacketPosX;
 	}
 
 	private double clientRacketPosY;
 
+	/**
+	 * Klasa zwracajaca polozenie Y paletki klienta w sposob synchroniczny
+	 * 
+	 * @author mdziendzikowski
+	 * @return polozenie Y rakietki klienta
+	 */
 	public synchronized double getClientRacketPosY() {
 		return clientRacketPosY;
 	}
 
+	/**
+	 * Klasa umozliwiajaca ustawienie polozenia paletki klienta w sposob
+	 * synchroniczny. Zastosowanie metody synchronizacji wspolbieznej zapobiega
+	 * zlemu wyswietlaniu paletki klienta.
+	 * 
+	 * @author mdziendzikowski
+	 * @return polozenie X rakietki klienta
+	 */
 	public synchronized void setClientRacketPos(double clientRacketPosX, double clientRacketPosY) {
 		this.clientRacketPosX = clientRacketPosX;
 		this.clientRacketPosY = clientRacketPosY;
@@ -77,18 +93,33 @@ public class ServerGameController {
 	private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;
 	private DataInputStream dataReader;
-	
-	//zmienna scored jest aktualizowana przez dwa niezalezne watki: petle gry serwera
-	//oraz zapytania do serwera wywolywane przez petle gry klienta, stad koniecznosc zastosowania
-	//metod zapewniajacych wspolbiezny dostep do zmiennej
+
 	private boolean scored;
-	private synchronized boolean getScored(){
+
+	/**
+	 * Synchroniczna metoda pobrania informacji o zdobyciu punktu przez ktoregos
+	 * z graczy. Zastosowanie synchronizacji pozwala na zachowanie spojnosci
+	 * danych pomiedzy aplikacja klienta (sterowana przez watek komunikacji)
+	 * oraz watkiem logiki gry serwera.
+	 * 
+	 * @author mdziendzikowski
+	 * @return zdobycie punktu w danym momencie gry.
+	 */
+	private synchronized boolean getScored() {
 		return scored;
 	}
-	private synchronized void setScored(boolean _scored){
+
+	/**
+	 * Synchroniczna metoda pozwalajaca na ustawienie informajci o zdobyciu
+	 * punktu przez ktoregos z graczy.
+	 * 
+	 * @author mdziendzikowski
+	 * @param _scored
+	 */
+	private synchronized void setScored(boolean _scored) {
 		this.scored = _scored;
 	}
-	
+
 	private Thread clientThread;
 
 	private int racketSpeed;
@@ -97,12 +128,6 @@ public class ServerGameController {
 
 	public UserInputQueue getUserInputQueue() {
 		return userInputQueue;
-	}
-
-	private Socket socket;
-
-	public Socket getSocket() {
-		return socket;
 	}
 
 	private Media soundPop;
@@ -115,14 +140,24 @@ public class ServerGameController {
 		return stage;
 	}
 
+	/**
+	 * Konstruktor kontrolera aplikacji serwera.
+	 * 
+	 * @author mdziendzikowski
+	 * @param controller
+	 */
 	public ServerGameController(ServerController controller) {
 		serverController = controller;
 		animationTimer = new GameAnimationTimer();
-		// socket = controller.getSocket();
 		userInputQueue = new UserInputQueue();
-		
+
 	}
 
+	/**
+	 * Metoda inicjalizujaca kontroler serwera.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	public void initialize() {
 
 		soundPop = new Media(new File("resources/sounds/Blop.mp3").toURI().toString());
@@ -130,7 +165,7 @@ public class ServerGameController {
 		clientScore = 0;
 		serverScore = 0;
 		scored = false;
-		
+
 		stage = new Stage();
 		stage.setTitle("PongServerGameApp");
 		stage.setOnCloseRequest(e -> stage_CloseRequest(e));
@@ -144,22 +179,32 @@ public class ServerGameController {
 
 	}
 
-	public void resetScore(){
+	/**
+	 * Metoda resetujaca wynik gry.
+	 * 
+	 * @author mdziendzikowski
+	 */
+	public void resetScore() {
 		clientScore = 0;
 		serverScore = 0;
-		
+
 	}
-	
+
+	/**
+	 * Metoda obslugujaca logike gry i widok aplikacji serwera.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	public void draw() {
 
 		switch (serverController.getServerState()) {
 
 		case ConnectionEstablished:
 			gameView.getGameStatusText().setText("Waiting for the game to start.");
-			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 230);  
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth / 2 - 230);
 			gameView.getGameStatusText().setVisible(true);
 			gameView.getGameInfoText().setVisible(true);
-			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
+			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed / 4 * 2 * Math.PI)));
 			break;
 
 		case GameStarted:
@@ -170,72 +215,70 @@ public class ServerGameController {
 			gameView.getPongBall().updatePosition();
 			soundHandle();
 			scoreUpdate();
-			if(clientScore >= GameUtilitiesVariables.maxscore || serverScore >= GameUtilitiesVariables.maxscore){
+			if (clientScore >= GameUtilitiesVariables.maxscore || serverScore >= GameUtilitiesVariables.maxscore) {
 				serverController.setServerState(ServerStateEnum.GameOver);
 			}
 			break;
 
 		case GamePaused:
 			gameView.getGameStatusText().setText("Game paused.");
-			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 130);
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth / 2 - 130);
 			gameView.getGameStatusText().setVisible(true);
 			gameView.getGameInfoText().setVisible(true);
-			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
+			gameView.getGameInfoText().setOpacity(Math.abs(Math.sin(secondsElapsed / 4 * 2 * Math.PI)));
 			break;
 
 		case GameOver:
 			gameView.getGameStatusText().setText("Game over.");
-			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth/2 - 100);
+			gameView.getGameStatusText().setTranslateX(GameUtilitiesVariables.gameBoardWidth / 2 - 100);
 			gameView.getGameStatusText().setVisible(true);
 			gameView.getGameOverText().setVisible(true);
-			gameView.getGameOverText().setOpacity(Math.abs(Math.sin(secondsElapsed/4 * 2 * Math.PI)));
+			gameView.getGameOverText().setOpacity(Math.abs(Math.sin(secondsElapsed / 4 * 2 * Math.PI)));
 			break;
 
 		default:
 			break;
 		}
 
-		
 		timeElapsed++;
 		secondsElapsed = timeElapsed / 60.0;
 	}
 
+	/**
+	 * Metoda weryfikujaca zdobycie punktu przez ktoregos z graczy
+	 * 
+	 * @author mdziendzikowski
+	 */
 	private void scoreUpdate() {
 		if (gameView.getPongBall().getBall().getCenterX() < 0) {
 			serverScore++;
 			gameView.initialize();
-			
-			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
-			// gameView.getPongBall().setVelocity(-1 *
-			// gameView.getInitialBallSpeed(), 0);
-			//scored = true;
+
+			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset,
+					GameUtilitiesVariables.gameBoardHeight / 2 - GameUtilitiesVariables.racketHeight / 2);
 			setScored(true);
-			//System.out.println("Bramka (nieprzechywcona)");
 		}
 
 		else if (gameView.getPongBall().getBall().getCenterX() > gameView.getBoardWidth()) {
 			clientScore++;
 			gameView.initialize();
-			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
-			//gameView.getClientScoreText().setText("" + clientScore);
-			//gameView.getServerScoreText().setText("" + serverScore);
-			//setClientRacketPos(gameView.getClientRacket().getPositionX(), gameView.getClientRacket().getPositionY());
-			// gameView.getPongBall().setVelocity(gameView.getInitialBallSpeed(),
-			// 0);
-			//scored = true;
+			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset,
+					GameUtilitiesVariables.gameBoardHeight / 2 - GameUtilitiesVariables.racketHeight / 2);
 			setScored(true);
-			//System.out.println("Bramka (nieprzechywcona)");
 		}
-		
+
 		gameView.getClientScoreText().setText("" + clientScore);
 		gameView.getServerScoreText().setText("" + serverScore);
-		//else{
-		//	scored = false;
-		//}
+
 	}
 
+	/**
+	 * Metoda obslugujaca dzwieki gry.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	private void soundHandle() {
-		
+
 		if (gameView.getClientRacket().intersectBall(gameView.getPongBall())) {
 			soundPlayer = new MediaPlayer(soundPop);
 			soundPlayer.play();
@@ -256,10 +299,13 @@ public class ServerGameController {
 			soundPlayer.play();
 		}
 
-
-		
 	}
 
+	/**
+	 * Metoda obslugujaca zdarzenia klawiatury.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	private void keyboardController() {
 
 		KeyCode keyCode = userInputQueue.getKeyCode();
@@ -303,6 +349,12 @@ public class ServerGameController {
 
 	}
 
+	/**
+	 * Klasa watku obslugujacego petle gry.
+	 * 
+	 * @author mdziendzikowski
+	 *
+	 */
 	private class GameAnimationTimer extends AnimationTimer {
 
 		@Override
@@ -312,6 +364,13 @@ public class ServerGameController {
 
 	}
 
+	/**
+	 * Metoda obslugujaca zamkniecie okna gry.
+	 * 
+	 * @author mdziendzikowski
+	 * @param windowEvent
+	 *            wywolanie zamknniecia okna gry.
+	 */
 	public void stage_CloseRequest(WindowEvent windowEvent) {
 		windowEvent.consume();
 
@@ -326,6 +385,13 @@ public class ServerGameController {
 		});
 	}
 
+	/**
+	 * Metoda obslugujaca watek komunikacji pomiedzy klientem i serwerem.
+	 * Czestotliwosc odswiezania watku zalezy od aplikacji klienta i jej petli
+	 * gry.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	private void clientServerCommChannel() {
 		Runnable clientListener = new Runnable() {
 			@Override
@@ -344,9 +410,7 @@ public class ServerGameController {
 						@Override
 						public void run() {
 							initialize();
-						} // mozliwe dzieki RunLater - JavaFx nie pozwala
-							// wywolac wielu ze swoich kontrolek spoza innych
-							// watkow, moze w sumie ma to sens
+						} 
 					});
 
 				} catch (IOException e) {
@@ -377,12 +441,12 @@ public class ServerGameController {
 							break;
 
 						case ConnectionEstablished:
-							//objectWriter.writeObject(serverController.getServerState());
+							// objectWriter.writeObject(serverController.getServerState());
 							exchangeData();
 							break;
 
 						case GameStarted:
-							//objectWriter.writeObject(serverController.getServerState());
+							// objectWriter.writeObject(serverController.getServerState());
 							exchangeData();
 							break;
 
@@ -440,8 +504,8 @@ public class ServerGameController {
 				 * Platform.runLater(new Runnable(){
 				 * 
 				 * @Override public void run() {
-				 * gameView.getClientRacket().setPosition(
-				 * clientRacketPosX, clientRacketPosY); } });
+				 * gameView.getClientRacket().setPosition( clientRacketPosX,
+				 * clientRacketPosY); } });
 				 */
 				// gameView.getClientRacket().setPosition(clientRacketPosX,
 				// clientRacketPosY); //w ten sposob jest zle
@@ -453,17 +517,16 @@ public class ServerGameController {
 
 				// to co ponizej trzeba obejsc przez runable albo
 				// synchronizacje
-				/*Platform.runLater(new Runnable() {
+				/*
+				 * Platform.runLater(new Runnable() {
+				 * 
+				 * @Override public void run() { serverRacketX =
+				 * gameView.getServerRacket().getPositionX(); serverRacketY =
+				 * gameView.getServerRacket().getPositionY(); ballX =
+				 * gameView.getPongBall().getPositionX(); ballY =
+				 * gameView.getPongBall().getPositionY(); } });
+				 */
 
-					@Override
-					public void run() {
-						serverRacketX = gameView.getServerRacket().getPositionX();
-						serverRacketY = gameView.getServerRacket().getPositionY();
-						ballX = gameView.getPongBall().getPositionX();
-						ballY = gameView.getPongBall().getPositionY();
-					}
-				});*/
-				
 				double serverRacketX = gameView.getServerRacket().getPositionX();
 				double serverRacketY = gameView.getServerRacket().getPositionY();
 				double ballX = gameView.getPongBall().getPositionX();
@@ -477,8 +540,8 @@ public class ServerGameController {
 				dataWriter.writeInt(serverScore);
 				dataWriter.writeInt(clientScore);
 				dataWriter.writeBoolean(getScored());
-				if(getScored()){
-					//System.out.println("Bramka u serwera.");
+				if (getScored()) {
+					// System.out.println("Bramka u serwera.");
 					setScored(false);
 				}
 			}
@@ -490,12 +553,17 @@ public class ServerGameController {
 
 	}
 
+	/**
+	 * Metoda inicjalizujaca gniazdo serwera gry.
+	 * @author mdziendzikowski
+	 * @param _port port na ktorym nasluchuje serwer
+	 * @return stan serwera
+	 */
 	public ServerStateEnum initializeConnection(int _port) {
 		try {
-			System.setProperty("sun.net.useExclusiveBind", "false"); // konieczne
-																		// dla
-																		// ustawienia
-																		// setReusePort
+			//konieczne dla ustawienia setReuseAddress
+			System.setProperty("sun.net.useExclusiveBind", "false");
+			
 			serverPong = new ServerSocket();
 			serverPong.setReuseAddress(true);
 			serverPong.bind(new InetSocketAddress(_port));
