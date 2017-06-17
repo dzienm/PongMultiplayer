@@ -16,16 +16,21 @@ import pongClient.controller.TitleScreenController;
 import pongServer.view.ServerScreen;
 import utilityWindows.AlertBox;
 
+/**
+ * Klasa kontrolera okna zarzadzania serwerem gry.
+ * 
+ * @author mdziendzikowski
+ *
+ */
+
 public class ServerController {
 
 	private Stage serverStage;
-	private TitleScreenController mainController; // byc moze niepotrzebny jesli
-													// otwierany jako oddzielne
-													// okno
+	private TitleScreenController mainController;
 
 	private Media soundcsgo;
 	private MediaPlayer musicPlayer;
-		
+
 	private ServerGameController serverGame;
 
 	private UserInputQueue userInputQueue;
@@ -56,14 +61,19 @@ public class ServerController {
 
 	ServerScreen serverView;
 
+	/**
+	 * Konstruktor klasy kontrolera gry.
+	 * @author mdziendzikowski
+	 * @param _controller kontroler okna powitalnego 
+	 */
 	public ServerController(TitleScreenController _controller) {
 		mainController = _controller;
-		
 		animationTimer = new GameAnimationTimer();
 	}
 
 	/**
-	 * Funkcja inicjalizujaca stan poczatkowy kontrolera.
+	 * Metoda inicjalizujaca stan poczatkowy kontrolera.
+	 * 
 	 * @author mdziendzikowski
 	 */
 	public void initialize() {
@@ -75,7 +85,7 @@ public class ServerController {
 		soundcsgo = new Media(new File("resources/sounds/csgoFindServer.mp3").toURI().toString());
 		musicPlayer = new MediaPlayer(soundcsgo);
 		musicPlayer.play();
-		
+
 		serverPort = -1;
 		serverState = ServerStateEnum.NotConnected;
 		totalSecondsLapsed = 0;
@@ -88,6 +98,11 @@ public class ServerController {
 
 	}
 
+	/**
+	 * Metoda resetuj¹ca okno serwera.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	public void reset() {
 		serverState = ServerStateEnum.NotConnected;
 		serverView = new ServerScreen(this);
@@ -96,6 +111,12 @@ public class ServerController {
 
 	}
 
+	/**
+	 * Metoda realizuj¹ca logikê animacji okna.
+	 * 
+	 * @author mdziendzikowski
+	 * @param timeCurrent
+	 */
 	public void draw(long timeCurrent) {
 
 		switch (serverState) {
@@ -133,13 +154,19 @@ public class ServerController {
 			musicPlayer.play();
 			animationTimer.stop();
 			break;
-			
+
 		default:
 			break;
 		}
 
 	}
 
+	/**
+	 * Metoda wywo³uj¹ca zdarzenie zamkniêcia okna gry.
+	 * 
+	 * @author mdziendzikowski
+	 * @param windowEvent
+	 */
 	public void stage_CloseRequest(WindowEvent windowEvent) {
 		windowEvent.consume();
 
@@ -172,6 +199,12 @@ public class ServerController {
 		}
 	}
 
+	/**
+	 * Metoda odliczajaca uplyw czasu gry.
+	 * 
+	 * @author mdziendzikowski
+	 * @param currentNanoTime
+	 */
 	public void updateTotalTime(long currentNanoTime) {
 
 		if ((currentNanoTime - startNanoTime) > 1000000000) {
@@ -181,6 +214,11 @@ public class ServerController {
 
 	}
 
+	/**
+	 * Metoda inicjalizujaca serwer gry.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	private void startServer() {
 
 		serverGame = new ServerGameController(this);
@@ -189,35 +227,19 @@ public class ServerController {
 		if (serverState == ServerStateEnum.NotConnected) {
 			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't start the server.");
 			reset();
-		} 
-		else {
+		} else {
 			serverView.getStartServerButton().setVisible(false);
 			serverView.getMainMenuButton().setVisible(false);
-		//	serverView.getStopServerButton().setVisible(true);
+
 		}
 
 	}
 
-	public void stopServerButtonPressed() {
-
-		// clientThread.interrupt();
-		reset();
-		// mainController.setServerController(new
-		// ServerController(mainController));
-		// mainController.getServerController().initialize();
-		// serverStage.close();
-
-		/*
-		 * try {
-		 * 
-		 * serverPong.close(); } catch (IOException e) {
-		 * 
-		 * AlertBox.showAndWait(AlertType.ERROR, "Pong",
-		 * "Error when stopping the server. "); e.printStackTrace(); }
-		 */
-
-	}
-
+	/**
+	 * Metoda inicjalizujaca rozpoczecie gry lub wznowienie przebiegu gry.
+	 * 
+	 * @author mdziendzikowski
+	 */
 
 	public void startGameButtonPressed() {
 		musicPlayer.stop();
@@ -226,6 +248,11 @@ public class ServerController {
 		serverView.getStopGameButton().setVisible(true);
 	}
 
+	/**
+	 * Metoda sluzaca do wstrzymania przebiegu gry.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	public void stopGameButtonPressed() {
 		serverState = ServerStateEnum.GamePaused;
 		serverView.getStartGameButton().setVisible(true);
@@ -233,7 +260,12 @@ public class ServerController {
 		musicPlayer = new MediaPlayer(soundcsgo);
 		musicPlayer.play();
 	}
-	
+
+	/**
+	 * Metoda sluzaca do ponownego uruchomienia gry po jej zakonczeniu.
+	 * 
+	 * @author mdziendzikowski
+	 */
 	public void restartGameButtonPressed() {
 		serverView.getStopGameButton().setVisible(true);
 		serverView.getRestartGameButton().setVisible(false);
@@ -243,7 +275,24 @@ public class ServerController {
 		serverState = ServerStateEnum.GameStarted;
 		animationTimer.start();
 	}
-	
+
+	/**
+	 * Metoda sluzaca do powrotu do okna powitalnego.
+	 * @author mdziendzikowski
+	 */
+	public void mainMenuButtonPressed() {
+		musicPlayer.stop();
+		animationTimer.stop();
+		mainController.initialize();
+	}
+
+	/**
+	 * Klasa animacji okna kontrolera serwera. Wywoluje metode draw oraz
+	 * updateTotalTime klasy ServerController z czestotliwoscia ok. 60Hz.
+	 * 
+	 * @author mdziendzikowski
+	 *
+	 */
 	private class GameAnimationTimer extends AnimationTimer {
 
 		@Override
@@ -253,12 +302,5 @@ public class ServerController {
 		}
 
 	}
-
-	public void mainMenuButtonPressed() {
-		musicPlayer.stop();
-		animationTimer.stop();
-		mainController.initialize();
-	}
-
 
 }
