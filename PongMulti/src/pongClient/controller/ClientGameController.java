@@ -101,9 +101,9 @@ public class ClientGameController {
 
 		try {
 			serverState = (ServerStateEnum) objectReader.readObject();
-			if(timeElapsed%60 == 0){
-				System.out.println("Stan serwera (u klienta):" + serverState.toString());
-			}
+			//if(timeElapsed%60 == 0){
+			//	System.out.println("Stan serwera (u klienta):" + serverState.toString());
+			//}
 			// dataWriter.writeDouble(gameView.getClientRacket().getPositionX());
 			// dataWriter.writeDouble(gameView.getClientRacket().getPositionY());
 		} catch (ClassNotFoundException e) {
@@ -131,10 +131,13 @@ public class ClientGameController {
 			keyboardController();
 			exchangeData();
 			if(scored){
+				System.out.println("Bramka.");
 				gameView.getClientRacket().getRacket().setTranslateX(GameUtilitiesVariables.initialRacketBoundaryOffset);
 				gameView.getClientRacket().getRacket().setTranslateY(GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 				//setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 				gameView.initialize();
+				//gameView = new ClientGameView(this);
+				//gameView.initialize();
 			}
 			soundHandle();
 			break;

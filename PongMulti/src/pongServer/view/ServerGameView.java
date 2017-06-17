@@ -126,6 +126,7 @@ public class ServerGameView {
         gameStatusText.setEffect(mb);
         gameStatusText.setTranslateX(boardWidth/2 - 230);       
         gameStatusText.setTranslateY(500);
+        gameStatusText.setVisible(false);
         
         gameInfoText = new Text();              
         gameInfoText.setText("Press: up, down, left or right arrows, to go: up, down, left or right respectively.");       
@@ -134,6 +135,7 @@ public class ServerGameView {
         gameInfoText.setEffect(mb);
         gameInfoText.setTranslateX(boardWidth/2 - 450);       
         gameInfoText.setTranslateY(600);
+        gameInfoText.setVisible(false);
        
         serverScoreText = new Text();              
         serverScoreText.setText("" + 0);       

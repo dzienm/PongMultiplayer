@@ -74,8 +74,17 @@ public class ServerGameController {
 	private DataOutputStream dataWriter;
 	private DataInputStream dataReader;
 	
+	//zmienna scored jest aktualizowana przez dwa niezalezne watki: petle gry serwera
+	//oraz zapytania do serwera wywolywane przez petle gry klienta, stad koniecznosc zastosowania
+	//metod zapewniajacych wspolbiezny dostep do zmiennej
 	private boolean scored;
-
+	private synchronized boolean getScored(){
+		return scored;
+	}
+	private synchronized void setScored(boolean _scored){
+		this.scored = _scored;
+	}
+	
 	private Thread clientThread;
 
 	private int racketSpeed;
@@ -182,7 +191,9 @@ public class ServerGameController {
 			setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
 			// gameView.getPongBall().setVelocity(-1 *
 			// gameView.getInitialBallSpeed(), 0);
-			scored = true;
+			//scored = true;
+			setScored(true);
+			//System.out.println("Bramka (nieprzechywcona)");
 		}
 
 		else if (gameView.getPongBall().getBall().getCenterX() > gameView.getBoardWidth()) {
@@ -194,11 +205,13 @@ public class ServerGameController {
 			//setClientRacketPos(gameView.getClientRacket().getPositionX(), gameView.getClientRacket().getPositionY());
 			// gameView.getPongBall().setVelocity(gameView.getInitialBallSpeed(),
 			// 0);
-			scored = true;
+			//scored = true;
+			setScored(true);
+			//System.out.println("Bramka (nieprzechywcona)");
 		}
-		else{
-			scored = false;
-		}
+		//else{
+		//	scored = false;
+		//}
 	}
 
 	private void soundHandle() {
@@ -443,7 +456,11 @@ public class ServerGameController {
 				dataWriter.writeDouble(clientRacketPosY);
 				dataWriter.writeInt(serverScore);
 				dataWriter.writeInt(clientScore);
-				dataWriter.writeBoolean(scored);
+				dataWriter.writeBoolean(getScored());
+				if(getScored()){
+					//System.out.println("Bramka u serwera.");
+					setScored(false);
+				}
 			}
 
 		};

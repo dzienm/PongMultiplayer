@@ -135,6 +135,7 @@ public class ClientGameView {
         gameStatusText.setEffect(mb);
         gameStatusText.setTranslateX(boardWidth/2 - 230);       
         gameStatusText.setTranslateY(500);
+        gameStatusText.setVisible(false);
         
         gameInfoText = new Text();              
         gameInfoText.setText("Press: W, S, A or D, to go: up, down, left or right respectively.");       
@@ -143,6 +144,7 @@ public class ClientGameView {
         gameInfoText.setEffect(mb);
         gameInfoText.setTranslateX(boardWidth/2 - 350);       
         gameInfoText.setTranslateY(600);
+        gameInfoText.setVisible(false);
         
         clientRacket = new PongRacket();
         clientRacket.setRacketFill(Color.SKYBLUE);
