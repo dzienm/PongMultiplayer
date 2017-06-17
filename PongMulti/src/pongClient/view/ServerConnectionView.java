@@ -17,7 +17,11 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pongClient.controller.ServerConnectionController;
 
-
+/**
+ * 
+ * @author cprzyborowski
+ *
+ */
 public class ServerConnectionView {
 
 	private ServerConnectionController viewController;

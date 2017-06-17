@@ -19,7 +19,11 @@ import javafx.stage.WindowEvent;
 import pongClient.view.ServerConnectionView;
 import utilityWindows.AlertBox;
 
-
+/**
+ * 
+ * @author cprzyborowski
+ *
+ */
 public class ServerConnectionController {
 
 	private TitleScreenController mainController;

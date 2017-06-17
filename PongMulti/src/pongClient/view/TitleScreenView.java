@@ -16,6 +16,11 @@ import pongClient.controller.TitleScreenController;
 import pongClient.model.PongBall;
 import pongClient.model.PongRacket;
 
+/**
+ * Klasa widoku ekranu powitalnego aplikacji.
+ * @author mdziendzikowski
+ *
+ */
 public class TitleScreenView {
 
 	private Image background;
@@ -67,6 +72,10 @@ public class TitleScreenView {
 		
 	}
 	
+	/**
+	 * Metoda inicjalizujaca zawartosc ekranu powitalnego.
+	 * @author mdziendzikowski
+	 */
 	public void initialize(){
 		
 		loadContent();
@@ -159,6 +168,10 @@ public class TitleScreenView {
 		
 	}
 	
+	/**
+	 * Metoda wczytujaca zasoby ekranu powitalnego.
+	 * @author mdziendzikowski
+	 */
 	private void loadContent(){
 		this.background = new Image("textures/titleScreen/main.png");
 	}

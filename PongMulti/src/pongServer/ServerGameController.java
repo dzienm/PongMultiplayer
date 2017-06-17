@@ -90,6 +90,7 @@ public class ServerGameController {
 	}
 
 	private ObjectOutputStream objectWriter;
+	@SuppressWarnings("unused")
 	private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;
 	private DataInputStream dataReader;

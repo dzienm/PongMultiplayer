@@ -6,6 +6,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * 
+ * @author cprzyborowski
+ *
+ */
 public class UserInputQueue {
 	
 	private ArrayDeque<KeyEvent> keyEvents;

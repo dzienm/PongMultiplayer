@@ -23,6 +23,11 @@ import pongClient.view.ClientGameView;
 import pongServer.ServerStateEnum;
 import utilityWindows.AlertBox;
 
+/**
+ * 
+ * @author cprzyborowski
+ *
+ */
 public class ClientGameController {
 
 	private ServerConnectionController mainController;
@@ -45,6 +50,7 @@ public class ClientGameController {
 
 	private boolean scored;
 	
+	@SuppressWarnings("unused")
 	private ObjectOutputStream objectWriter;
 	private ObjectInputStream objectReader;
 	private DataOutputStream dataWriter;

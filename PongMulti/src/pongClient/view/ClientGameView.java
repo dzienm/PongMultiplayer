@@ -18,6 +18,11 @@ import pongClient.controller.ClientGameController;
 import pongClient.model.PongBall;
 import pongClient.model.PongRacket;
 
+/**
+ * 
+ * @author cprzyborowski
+ *
+ */
 public class ClientGameView {
 
 	private Image background;

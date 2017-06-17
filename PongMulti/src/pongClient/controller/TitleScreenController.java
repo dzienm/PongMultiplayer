@@ -17,7 +17,11 @@ import pongClient.view.TitleScreenView;
 import pongServer.ServerController;
 import utilityWindows.AlertBox;
 
-//warto przyjrzec sie patternowi Dependency Injection/ Inversion of Control
+/**
+ * Kontroler ekranu powitalnego aplikacji.
+ * @author mdziendzikowski
+ *
+ */
 
 public class TitleScreenController {
 
@@ -49,6 +53,10 @@ public class TitleScreenController {
 		userInputQueue = new UserInputQueue();
 	}
 
+	/**
+	 * Metoda inicjujaca kontroler.
+	 * @author mdziendzikowski
+	 */
 	public void initialize(){
 		loadContent();
 		
@@ -70,12 +78,20 @@ public class TitleScreenController {
 		//openClient();
 	}
 	
+	/**
+	 * Metoda wczytujaca zasoby kontrolera.
+	 * @author mdziendzikowski
+	 */
 	private void loadContent(){
 		gameIcon = new Image("icons/Game.png");
 		soundPop = new Media(new File("resources/sounds/Blop.mp3").toURI().toString());
 		soundcsgo = new Media(new File("resources/sounds/csgoTitleScreen.mp3").toURI().toString());
 	}
 	
+	/**
+	 * Metoda aktualizujaca widok ekranu powitalnego wywolywana przez watek petli gry.
+	 * @author mdziendzikowski
+	 */
 	public void draw() {
 		
 		KeyCode keyCode = userInputQueue.getKeyCode();
@@ -148,16 +164,25 @@ public class TitleScreenController {
 		
 	}
 
+	
 	public void playPressed() {
 		System.out.println("wcisnieto");
 	}
 	
+	/**
+	 * Metoda wywolujaca ekran kontrolera serwera aplikacji.
+	 * @author mdziendzikowski
+	 */
 	public void openServer(){
 		close();
 		ServerController serverControl = new ServerController(this);
 		serverControl.initialize();
 	}
 
+	/**
+	 * Metoda wywolujaca ekran kontrolera klienta aplikacji.
+	 * @author mdziendzikowski
+	 */
 	public void openClient(){
 		close();
 		ServerConnectionController connectionControl = new ServerConnectionController(this);
@@ -165,11 +190,19 @@ public class TitleScreenController {
 		
 	}
 	
+	/**
+	 * Metoda zatrzymujaca petle gry ekranu powitalnego.
+	 */
 	public void close(){
 		musicPlayer.stop();
 		animationTimer.stop();
 	}
 	
+	/**
+	 * Metoda obslugujaca zdarzenie wywolania zamkniecia okna ekranu powitalnego
+	 * @author mdziendzikowski
+	 * @param windowEvent zdarzenie zamkniecie okna
+	 */
 	public void stage_CloseRequest(WindowEvent windowEvent) {
 		windowEvent.consume();
 
@@ -184,6 +217,11 @@ public class TitleScreenController {
 		});
 	}
 	
+	/**
+	 * Klasa watku petli gry kontrolera.
+	 * @author mdziendzikowski
+	 *
+	 */
 	private class GameAnimationTimer extends AnimationTimer {
 
 
