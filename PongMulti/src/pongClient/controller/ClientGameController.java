@@ -110,6 +110,29 @@ public class ClientGameController {
 		switch (serverState) {
 
 		case ConnectionEstablished:
+			keyboardController();
+			try {
+				dataWriter.writeDouble(gameView.getClientRacket().getPositionX());
+				dataWriter.writeDouble(gameView.getClientRacket().getPositionY());
+				double serverRacketPosX = (double) dataReader.readDouble();
+				double serverRacketPosY = (double) dataReader.readDouble();
+				gameView.getServerRacket().setPosition(serverRacketPosX, serverRacketPosY);
+				double ballPosX = (double) dataReader.readDouble();
+				double ballPosY = (double) dataReader.readDouble();
+				gameView.getPongBall().setPosition(ballPosX, ballPosY);
+				double clientRacketPosX = (double) dataReader.readDouble();
+				double clientRacketPosY = (double) dataReader.readDouble();
+				gameView.getClientRacket().setPosition(clientRacketPosX, clientRacketPosY);
+				int serverScore = (int) dataReader.readInt();
+				int clientScore = (int) dataReader.readInt();
+				gameView.getServerScoreText().setText("" + serverScore);
+				gameView.getClientScoreText().setText("" + clientScore);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			soundHandle();
 			break;
 
 		case GameStarted:
@@ -175,8 +198,6 @@ public class ClientGameController {
 	}
 
 	private void keyboardController() {
-		keyboardController();
-
 		KeyCode keyCode = userInputQueue.getKeyCode();
 
 		if (keyCode == KeyCode.ESCAPE) {

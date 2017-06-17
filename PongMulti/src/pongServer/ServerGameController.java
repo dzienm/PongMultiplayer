@@ -36,6 +36,11 @@ public class ServerGameController {
 	private ServerSocket serverPong;
 	private Socket clientSocket;
 
+	double serverRacketX;
+	double serverRacketY;
+	double ballX;
+	double ballY;
+	
 	// zastosowanie metody synchronizacji wspolbieznej zapobiega zlemu
 	// wyswietlaniu paletki klienta
 
@@ -123,19 +128,66 @@ public class ServerGameController {
 
 	public void draw() {
 
-		keyboardController();
-		soundHandle();
-		gameView.getClientRacket().setPosition(getClientRacketPosX(), getClientRacketPosY());
-		// gameView.getClientRacket().setPosition(clientRacketPosX,
-		// clientRacketPosY); //tak tez jest dobrze - nie jest dobrze tylko jak
-		// watek inny niz JavaFX wywoluje
+		switch (serverController.getServerState()) {
+
+		case ConnectionEstablished:
+			keyboardController();
+			gameView.getClientRacket().setPosition(getClientRacketPosX(), getClientRacketPosY());
+			gameView.getPongBall().updatePosition();
+
+			// gameView.getClientRacket().setPosition(clientRacketPosX,
+			// clientRacketPosY); //tak tez jest dobrze - nie jest dobrze tylko jak
+			// watek inny niz JavaFX wywoluje
+			soundHandle();
+			scoreUpdate();
+			break;
+
+		case GameStarted:
+			keyboardController();
+			gameView.getClientRacket().setPosition(getClientRacketPosX(), getClientRacketPosY());
+			gameView.getPongBall().updatePosition();
+
+			// gameView.getClientRacket().setPosition(clientRacketPosX,
+			// clientRacketPosY); //tak tez jest dobrze - nie jest dobrze tylko jak
+			// watek inny niz JavaFX wywoluje
+			soundHandle();
+			scoreUpdate();
+			
+			break;
+
+		case GamePaused:
+			break;
+
+		case GameOver:
+			break;
+
+		default:
+			break;
+		}
 
 		
-
-		gameView.getPongBall().updatePosition();
-
 		timeElapsed++;
 		secondsElapsed = timeElapsed / 60.0;
+	}
+
+	private void scoreUpdate() {
+		if (gameView.getPongBall().getBall().getCenterX() < 0) {
+			serverScore++;
+			gameView.initialize();
+			gameView.getClientScoreText().setText("" + clientScore);
+			gameView.getServerScoreText().setText("" + serverScore);
+			// gameView.getPongBall().setVelocity(-1 *
+			// gameView.getInitialBallSpeed(), 0);
+		}
+
+		if (gameView.getPongBall().getBall().getCenterX() > gameView.getBoardWidth()) {
+			clientScore++;
+			gameView.initialize();
+			gameView.getClientScoreText().setText("" + clientScore);
+			gameView.getServerScoreText().setText("" + serverScore);
+			// gameView.getPongBall().setVelocity(gameView.getInitialBallSpeed(),
+			// 0);
+		}
 	}
 
 	private void soundHandle() {
@@ -160,23 +212,7 @@ public class ServerGameController {
 			soundPlayer.play();
 		}
 
-		if (gameView.getPongBall().getBall().getCenterX() < 0) {
-			serverScore++;
-			gameView.initialize();
-			gameView.getClientScoreText().setText("" + clientScore);
-			gameView.getServerScoreText().setText("" + serverScore);
-			// gameView.getPongBall().setVelocity(-1 *
-			// gameView.getInitialBallSpeed(), 0);
-		}
 
-		if (gameView.getPongBall().getBall().getCenterX() > gameView.getBoardWidth()) {
-			clientScore++;
-			gameView.initialize();
-			gameView.getClientScoreText().setText("" + clientScore);
-			gameView.getServerScoreText().setText("" + serverScore);
-			// gameView.getPongBall().setVelocity(gameView.getInitialBallSpeed(),
-			// 0);
-		}
 		
 	}
 
@@ -312,6 +348,30 @@ public class ServerGameController {
 							// clientRacketPosY); //w ten sposob jest zle
 							// renderowanie, trzeba albo przez Platform.Later
 							// albo przez synchronizacje
+							clientRacketPosX = dataReader.readDouble();
+							clientRacketPosY = dataReader.readDouble();
+							setClientRacketPos(clientRacketPosX, clientRacketPosY);
+
+							// to co ponizej trzeba obejsc przez runable albo
+							// synchronizacje
+							Platform.runLater(new Runnable() {
+
+								@Override
+								public void run() {
+									serverRacketX = gameView.getServerRacket().getPositionX();
+									serverRacketY = gameView.getServerRacket().getPositionY();
+									ballX = gameView.getPongBall().getPositionX();
+									ballY = gameView.getPongBall().getPositionY();
+								}
+							});
+							dataWriter.writeDouble(serverRacketX);
+							dataWriter.writeDouble(serverRacketY);
+							dataWriter.writeDouble(ballX);
+							dataWriter.writeDouble(ballY);
+							dataWriter.writeDouble(clientRacketPosX);
+							dataWriter.writeDouble(clientRacketPosY);
+							dataWriter.writeInt(serverScore);
+							dataWriter.writeInt(clientScore);
 							break;
 
 						case GameStarted:
@@ -320,15 +380,26 @@ public class ServerGameController {
 							clientRacketPosY = dataReader.readDouble();
 							setClientRacketPos(clientRacketPosX, clientRacketPosY);
 
-							dataWriter.writeDouble(gameView.getServerRacket().getPositionX());
-							dataWriter.writeDouble(gameView.getServerRacket().getPositionY());
-							dataWriter.writeDouble(gameView.getPongBall().getPositionX());
-							dataWriter.writeDouble(gameView.getPongBall().getPositionY());
+							// to co ponizej trzeba obejsc przez runable albo
+							// synchronizacje
+							Platform.runLater(new Runnable() {
+
+								@Override
+								public void run() {
+									serverRacketX = gameView.getServerRacket().getPositionX();
+									serverRacketY = gameView.getServerRacket().getPositionY();
+									ballX = gameView.getPongBall().getPositionX();
+									ballY = gameView.getPongBall().getPositionY();
+								}
+							});
+							dataWriter.writeDouble(serverRacketX);
+							dataWriter.writeDouble(serverRacketY);
+							dataWriter.writeDouble(ballX);
+							dataWriter.writeDouble(ballY);
 							dataWriter.writeDouble(clientRacketPosX);
 							dataWriter.writeDouble(clientRacketPosY);
 							dataWriter.writeInt(serverScore);
 							dataWriter.writeInt(clientScore);
-
 							break;
 
 						case GamePaused:
