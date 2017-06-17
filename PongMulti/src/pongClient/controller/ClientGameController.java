@@ -20,7 +20,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pongClient.view.ClientGameView;
-import pongClient.view.ServerConnectionView;
 import pongServer.ServerStateEnum;
 import utilityWindows.AlertBox;
 
@@ -54,9 +53,6 @@ public class ClientGameController {
 	private Media soundPop;
 	private MediaPlayer soundPlayer;
 
-	// private int clientScore;
-	// private int serverScore;
-
 	public Stage getStage() {
 		return stage;
 	}
@@ -66,8 +62,6 @@ public class ClientGameController {
 		animationTimer = new GameAnimationTimer();
 		socket = controller.getSocket();
 		userInputQueue = new UserInputQueue();
-		// clientScore = 0;
-		// serverScore = 0;
 		scored = false;
 	}
 
@@ -81,8 +75,9 @@ public class ClientGameController {
 			dataWriter = new DataOutputStream(socket.getOutputStream());
 			dataReader = new DataInputStream(socket.getInputStream());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			
+			System.err.println("Communication error. Close the program.");
+			System.exit(0);
 		}
 
 		stage = mainController.getStage();
@@ -101,17 +96,13 @@ public class ClientGameController {
 
 		try {
 			serverState = (ServerStateEnum) objectReader.readObject();
-			//if(timeElapsed%60 == 0){
-			//	System.out.println("Stan serwera (u klienta):" + serverState.toString());
-			//}
-			// dataWriter.writeDouble(gameView.getClientRacket().getPositionX());
-			// dataWriter.writeDouble(gameView.getClientRacket().getPositionY());
+			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Communication error. Close the program.");
+			System.exit(0);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Communication error. Close the program.");
+			System.exit(0);
 		}
 
 		switch (serverState) {
@@ -132,13 +123,9 @@ public class ClientGameController {
 			keyboardController();
 			exchangeData();
 			if(scored){
-				//System.out.println("Bramka.");
 				gameView.getClientRacket().getRacket().setTranslateX(GameUtilitiesVariables.initialRacketBoundaryOffset);
 				gameView.getClientRacket().getRacket().setTranslateY(GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
-				//setClientRacketPos(GameUtilitiesVariables.initialRacketBoundaryOffset, GameUtilitiesVariables.gameBoardHeight/2 - GameUtilitiesVariables.racketHeight/2);
-				//gameView.initialize();
-				//gameView = new ClientGameView(this);
-				//gameView.initialize();
+				
 			}
 			soundHandle();
 			break;
@@ -189,8 +176,9 @@ public class ClientGameController {
 			scored = (boolean) dataReader.readBoolean();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			System.err.println("Communication error. Close the program.");
+			System.exit(0);
 		}
 	}
 

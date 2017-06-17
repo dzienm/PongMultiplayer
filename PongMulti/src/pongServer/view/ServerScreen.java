@@ -18,6 +18,12 @@ import javafx.stage.WindowEvent;
 
 import pongServer.ServerController;
 
+/**
+ * Klasa widoku okna zarzadania serwerem gry.
+ * @author mdziendzikowski
+ *
+ */
+
 public class ServerScreen {
 
 	private Image background;
@@ -32,7 +38,6 @@ public class ServerScreen {
 	private Button startServerButton;
 	private Button mainMenuButton;
 
-	//private Button stopServerButton;
 	private Button startGameButton;
 	private Button restartGameButton;
 
@@ -42,16 +47,25 @@ public class ServerScreen {
 	private Text serverStartedText;
 	private Text waitingConnectionText;
 	private Text clientConnectedText;
-	
 
+	/**
+	 * Konstruktor klasy.
+	 * 
+	 * @author mdziendzikowski
+	 * @param _controller
+	 *            kontroler okna
+	 */
+	public ServerScreen(ServerController _controller) {
 
-	public ServerScreen(ServerController _controller){
-		
 		serverController = _controller;
 		stage = serverController.getServerStage();
-		
+
 	}
-	
+
+	/**
+	 * Metoda inicjalizujaca widok okna serwera.
+	 * @author mdziendzikowski
+	 */
 	public void initialize(){
 		
 		loadContent();
@@ -140,16 +154,6 @@ public class ServerScreen {
         mainMenuButton.setOnMousePressed(e -> {
 			serverController.mainMenuButtonPressed();});
         
-       /* stopServerButton = new Button();
-        stopServerButton.setTranslateX(500);
-        stopServerButton.setTranslateY(316);
-        stopServerButton.setPrefWidth(250);
-        stopServerButton.setFont(Font.font("null", FontWeight.BOLD, 24));
-        stopServerButton.setText("Stop server");
-        stopServerButton.setOnMousePressed(e -> {
-			serverController.stopServerButtonPressed();});
-        stopServerButton.setId("stopServerButton");
-        stopServerButton.setVisible(false);*/
         
         startGameButton = new Button();
         startGameButton.setTranslateX(220);
@@ -157,7 +161,7 @@ public class ServerScreen {
         startGameButton.setPrefWidth(250);
         startGameButton.setFont(Font.font("null", FontWeight.BOLD, 24));
         startGameButton.setText("Start game");
-        startServerButton.setId("startServerButton");
+        startGameButton.setId("startServerButton");
         startGameButton.setOnMousePressed(e -> {
 			serverController.startGameButtonPressed();});
         startGameButton.setVisible(false);
@@ -202,7 +206,6 @@ public class ServerScreen {
 		root.getChildren().add(startServerButton);
 		root.getChildren().add(mainMenuButton);
 		root.getChildren().add(restartGameButton);
-		//root.getChildren().add(stopServerButton);
 		root.getChildren().add(startGameButton);
 		root.getChildren().add(stopGameButton);
 				
@@ -240,10 +243,6 @@ public class ServerScreen {
 		return textField;
 	}
 	
-	/*public Button getStopServerButton() {
-		return stopServerButton;
-	}*/
-
 	public Button getStartServerButton() {
 		return startServerButton;
 	}
@@ -264,6 +263,10 @@ public class ServerScreen {
 		return mainMenuButton;
 	}
 	
+	/**
+	 * Metoda wczytujaca niezbedne zasoby.
+	 * @author mdziendzikowski
+	 */
 	private void loadContent(){
 		this.background = new Image("textures/titleScreen/main.png");
 	}
