@@ -270,6 +270,7 @@ public class ClientGameController {
 				if (AlertBox.showAndWait(AlertType.CONFIRMATION, "Pong", "Do you want to close the program?")
 						.orElse(ButtonType.CANCEL) == ButtonType.OK) {
 					stage.close();
+					System.exit(0);
 				}
 			}
 		});

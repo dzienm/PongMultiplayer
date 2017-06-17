@@ -176,6 +176,7 @@ public class ServerController {
 				if (AlertBox.showAndWait(AlertType.CONFIRMATION, "Pong", "Do you want to close the server?")
 						.orElse(ButtonType.CANCEL) == ButtonType.OK) {
 					serverStage.close();
+					System.exit(0);
 				}
 			}
 		});

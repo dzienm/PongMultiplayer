@@ -9,9 +9,9 @@ package gameUtilities;
  */
 public final class GameUtilitiesVariables {
 
-	// Zmienne konfiguracyjne obiektów gry. Zmienne s¹ finalne, zatem dostêp do
-	// nich mo¿na upubliczniæ i nie jest to b³êdem
-	// (podobnie jest np. z wartoœci¹ Math.PI w klasie Math
+	// Zmienne konfiguracyjne obiektow gry. Zmienne sa finalne, zatem dostep do
+	// nich mozna upublicznic i nie jest to bledem
+	// (podobnie jest np. z wartoscia Math.PI w klasie Math
 
 	public static final int racketSpeed = 7;
 	public static final int initialRacketBoundaryOffset = 100;

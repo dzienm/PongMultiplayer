@@ -129,6 +129,8 @@ public class ServerGameView {
 
 	/**
 	 * Metoda inicjalizacji widoku gry.
+	 * 
+	 * @author mdziendzikowski
 	 */
 	public void initialize() {
 
@@ -276,6 +278,7 @@ public class ServerGameView {
 
 	/**
 	 * Metoda wczytujaca zasoby potrzbne do inicjalizacji ekranu gry.
+	 * 
 	 * @author mdziendzikowski
 	 */
 	private void loadContent() {

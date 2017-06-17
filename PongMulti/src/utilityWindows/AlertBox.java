@@ -7,6 +7,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
+/**
+ * Klasa okienek pomocniczych.
+ * @author cprzyborowski
+ *
+ */
 public class AlertBox  {
 	
 	private AlertBox() {}
