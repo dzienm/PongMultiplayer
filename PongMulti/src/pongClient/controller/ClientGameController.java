@@ -24,6 +24,8 @@ import pongServer.ServerStateEnum;
 import utilityWindows.AlertBox;
 
 /**
+ * Kontroler pomocniczy ³aduj¹cy okno aplikacji oraz konsumuj¹ca event'y
+ * u¿ytkownika. Podczas nawi¹zywania po³¹czenia z socket'em serwera.
  * 
  * @author cprzyborowski
  *
@@ -276,10 +278,6 @@ public class ClientGameController {
 		});
 	}
 
-	public void backButtonPressed() {
-		animationTimer.stop();
-		mainController.initialize();
 
-	}
 
 }

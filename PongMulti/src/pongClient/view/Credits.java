@@ -1,6 +1,5 @@
 package pongClient.view;
 
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,22 +20,26 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * Klasa okienka informacji o grze
+ * Samodzielna klasa generuj¹ca, wyœwietlaj¹ca i obs³uguj¹ca event'y okienka
+ * {@link Credits#}. Okno wyœwietla podstawowe informacje o autorach oraz
+ * instrukcjê aplikacji.
+ * 
  * @author cprzyborowski
  *
  */
-
 public class Credits extends Application {
 	private static final double CHECK_PANE_WIDTH = 0;
-	public String opis = " Autorzy , , cpreze cprzyborowski,  dzienm  mdziendzikowski, ,-----------------------------------,, Opis gry, , Pong  -  dwuwymiarowa, gra sportowa symuluje,  tenis  sto³owy. Gracz, porusza  sie  paletk¹, umieszczon¹ na skraju, ekranu. Mo¿na  graæ z,   przeciwnikiem poprzez, zasoby sieci lokalnej., Celem  jest  zdobycie,   dziesieciu   punktów.,-----------------------------------,";
-	private Image gameIcon= new Image("icons/Game.png");
-	
-	 private String	background = "textures/titleScreen/main.png";
- public Credits() {
-		//start();
+	public String opis = " Autorzy: , , Cezary Przyborowski, Micha³ Dziendzikowski,Java EE , produkcja oprogramowania ,rocznik 2016-2017, Studia podyplomowe, Politechnika Warszawska, ,-----------------------------------,, Opis (cel) gry:, , Pong - dwuwymiarowa, gra sportowa symuluj¹ca, tenis sto³owy. Gracz, porusza sie paletk¹, umieszczon¹ na skraju, ekranu. Mo¿na graæ z, przeciwnikiem poprzez, zasoby sieci lokalnej., Celem jest zdobycie , przewagi punktowej , nad przeciwnikiem.,-----------------------------------,";
+	private Image gameIcon = new Image("icons/Game.png");
+
+	private String background = "textures/titleScreen/main.png";
+
+	public Credits() {
+		
 	}
+
 	public void start() {
-		Stage primaryStage =new Stage();
+		Stage primaryStage = new Stage();
 		List<String> listTmp = Arrays.asList(opis.split(","));
 		VBox vbox = new VBox();
 
@@ -45,20 +48,20 @@ public class Credits extends Application {
 			text.setFont(Font.font("Courier", FontWeight.BOLD, 15));
 			text.setWrappingWidth(CHECK_PANE_WIDTH / 2.8);
 			text.setFill(Color.GREENYELLOW);
-			text.setText(center(listTmp.get(i % listTmp.size()), 40));
+			text.setText(listTmp.get(i % listTmp.size()));
 			vbox.getChildren().add(text);
 
 		}
-	
-		
-		vbox.setStyle("-fx-background-image: url("+background+");-fx-background-repeat:no-repeat;-fx-background-size:cover ;-fx-background-position:left,top");
+
+		vbox.setStyle("-fx-background-image: url(" + background
+				+ ");-fx-background-repeat:no-repeat;-fx-background-size:cover ;-fx-background-position:left,top; -fx-alignment: center ; -fx-padding: 10 ;");
 
 		ScrollPane sp = new ScrollPane(vbox);
 		sp.setHbarPolicy(ScrollBarPolicy.NEVER);
 		sp.setVbarPolicy(ScrollBarPolicy.NEVER);
 
-		Scene scene = new Scene(sp, 230, 10 * 12);
-	
+		Scene scene = new Scene(sp, 220, 10 * 12);
+
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("PongMulti - Credits");
 		primaryStage.getIcons().add(gameIcon);
@@ -66,7 +69,7 @@ public class Credits extends Application {
 		primaryStage.show();
 		double textHeight = vbox.getHeight() / vbox.getChildren().size();
 		primaryStage.setHeight(textHeight * 12 + primaryStage.getHeight() - scene.getHeight());
-		 primaryStage.setResizable(false);
+		primaryStage.setResizable(false);
 		Timeline timeline = new Timeline();
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		KeyValue kv = new KeyValue(sp.vvalueProperty(), sp.getVmax());
@@ -75,15 +78,6 @@ public class Credits extends Application {
 		timeline.play();
 	}
 
-	public static String center(String text, int len) {
-		String out = String.format("%" + len + "s%s%" + len + "s", "", text, "");
-		float mid = (out.length() / 2);
-		float start = mid - (len / 2);
-		float end = start + len;
-		return out.substring((int) start, (int) end);
-	}
-	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
 	}
 }

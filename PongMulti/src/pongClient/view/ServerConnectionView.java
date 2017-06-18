@@ -18,6 +18,8 @@ import javafx.stage.WindowEvent;
 import pongClient.controller.ServerConnectionController;
 
 /**
+ * Klasa generuj¹ca widok okna parametryzacji serwera. 
+ * 
  * 
  * @author cprzyborowski
  *

@@ -20,6 +20,9 @@ import pongClient.view.ServerConnectionView;
 import utilityWindows.AlertBox;
 
 /**
+ * Kontroler pomocniczy ³aduj¹cy okno aplikacji oraz konsumuj¹ca event'y
+ * u¿ytkownika. Podczas nawi¹zywania po³¹czenia z socket'em klienta oraz
+ * przekazuj¹ca sterowanie do klasy serwer.
  * 
  * @author cprzyborowski
  *
@@ -30,7 +33,6 @@ public class ServerConnectionController {
 	private ServerConnectionView connectionView;
 	private GameAnimationTimer animationTimer;
 	private Stage stage;
-	private long timeElapsed;
 	
 	private String serverIp;
 	private int serverPort;
@@ -86,7 +88,6 @@ public class ServerConnectionController {
 			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
 		}
 		
-		timeElapsed++;
 		
 	}
 
@@ -152,7 +153,6 @@ public class ServerConnectionController {
 			gameViewControl.initialize();
 		} catch (IOException e) {
 			AlertBox.showAndWait(AlertType.ERROR, "Pong", "Can't connect to the server.");
-			//e.printStackTrace();
 			initialize();
 		}
 			
