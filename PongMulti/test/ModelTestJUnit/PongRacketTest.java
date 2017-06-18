@@ -119,11 +119,32 @@ public class PongRacketTest {
 		assertEquals(tmp+1, tester.getBounceNumber());
 	}
 
+	
+	
 	/**
 	 * Test metody okreslajacej czy rakietka i pileczka stykaja sie.
 	 */
 	@Test
-	public final void testIntersectBall() {
+	public final void testIntersectBallReturnsFalseWhenBallandRacketareSeparated() {
+		
+		PongRacket tester = new PongRacket();
+		tester.setHeight(100);
+		tester.setWidth(25);
+		tester.setPosition(0, 0);
+		
+		PongBall pileczka = new PongBall();
+		pileczka.setRadius(10);
+		pileczka.setPosition(50, 50);
+		
+		boolean przecina = tester.intersectBall(pileczka);
+		assertFalse(przecina);
+	}
+
+	/**
+	 * Test metody okreslajacej czy rakietka i pileczka stykaja sie.
+	 */
+	@Test
+	public final void testIntersectBallReturnsTrueWhenBallandRacketIntersect() {
 		
 		PongRacket tester = new PongRacket();
 		tester.setHeight(100);
@@ -137,5 +158,4 @@ public class PongRacketTest {
 		boolean przecina = tester.intersectBall(pileczka);
 		assertTrue(przecina);
 	}
-
 }
